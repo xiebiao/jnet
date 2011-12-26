@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NioServer {
-	private final Logger LOG = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(NioServer.class);
 	private final ServerSocketChannel serverSocketChannel;
 	private ByteBuffer r_buff = ByteBuffer.allocate(1024);;
 	private ByteBuffer w_buff = ByteBuffer.allocate(1024);;
