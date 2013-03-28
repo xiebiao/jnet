@@ -79,6 +79,7 @@ public class Packer {
 		long num = 0;
 		if (bigEndian) {
 			for (int i = 0; i < len; i++) {
+				// 转码
 				num = (num << 8) | (stream[i] & 0xff);
 			}
 		} else {

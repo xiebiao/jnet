@@ -1,4 +1,4 @@
-package jnet.core.http;
+package jnet.protocol.http11;
 
 public class ServletFactory {
 	public static ServletFilter filter = null;

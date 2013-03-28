@@ -1,4 +1,4 @@
-package jnet.core.http;
+package jnet.protocol.http11;
 
 import jnet.core.server.Session;
 import jnet.core.util.IOBuffer;

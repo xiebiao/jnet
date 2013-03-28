@@ -1,9 +1,9 @@
 package xnet.demo.httpserver;
 
-import jnet.core.http.HttpAttr;
-import jnet.core.http.Request;
-import jnet.core.http.Servlet;
-import jnet.core.http.ServletFilter;
+import jnet.protocol.http11.HttpAttr;
+import jnet.protocol.http11.Request;
+import jnet.protocol.http11.Servlet;
+import jnet.protocol.http11.ServletFilter;
 
 public class Filter implements ServletFilter {
 

@@ -1,4 +1,4 @@
-package jnet.core.http;
+package jnet.protocol.http11;
 
 public interface ServletFilter {
 	/**

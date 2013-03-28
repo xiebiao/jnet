@@ -1,4 +1,4 @@
-package jnet.core.http;
+package jnet.protocol.http11;
 
 public class HttpAttr {
 	public static final String HEAD_CONTENT_LEN = "Content-Length";
