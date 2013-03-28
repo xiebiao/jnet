@@ -5,9 +5,9 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.ArrayList;
 
-import com.xiebiao.jnet.core.client.Connection;
 
 
+import jnet.core.client.Connection;
 import junit.framework.TestCase;
 
 public class TestConnection extends TestCase {

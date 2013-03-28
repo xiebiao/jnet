@@ -1,7 +1,7 @@
 package xnet.core.test;
 
-import com.xiebiao.jnet.core.util.Packer;
 
+import jnet.core.util.Packer;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
