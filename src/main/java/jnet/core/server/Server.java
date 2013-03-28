@@ -11,10 +11,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import jnet.core.util.IOBuffer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import jnet.log.Logger;
+import jnet.log.LoggerFactory;
 
 public class Server {
 	private static final Logger logger = LoggerFactory.getLogger(Server.class);

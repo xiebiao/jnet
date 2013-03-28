@@ -11,15 +11,15 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<!-- Log libs -->
+		<!-- Logging libs -->
 		<log4j_version>1.2.16</log4j_version>
 		<slf4j_version>1.6.2</slf4j_version>
 		<slf4j_log4j12_version>1.6.4</slf4j_log4j12_version>
-		<!-- plugins -->
 	</properties>
 
 	<dependencies>
-		<!-- Log libs -->
+		<!-- Logging libs -->
+
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
@@ -38,6 +38,7 @@
 			<version>${slf4j_log4j12_version}</version>
 			<scope>provided</scope>
 		</dependency>
+
 		<!-- Test libs -->
 		<dependency>
 			<groupId>junit</groupId>
