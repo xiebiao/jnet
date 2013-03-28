@@ -1,4 +1,4 @@
-package xnet.core.http;
+package com.xiebiao.jnet.core.http;
 
 public interface ServletFilter {
 	/**

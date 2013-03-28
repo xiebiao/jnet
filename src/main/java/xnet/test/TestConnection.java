@@ -5,7 +5,8 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.ArrayList;
 
-import xnet.core.client.Connection;
+import com.xiebiao.jnet.core.client.Connection;
+
 
 import junit.framework.TestCase;
 

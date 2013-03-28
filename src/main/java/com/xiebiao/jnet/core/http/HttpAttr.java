@@ -1,4 +1,4 @@
-package xnet.core.http;
+package com.xiebiao.jnet.core.http;
 
 public class HttpAttr {
 	public static final String HEAD_CONTENT_LEN = "Content-Length";

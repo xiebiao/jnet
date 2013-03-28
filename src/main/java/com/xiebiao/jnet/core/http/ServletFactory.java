@@ -1,4 +1,4 @@
-package xnet.core.http;
+package com.xiebiao.jnet.core.http;
 
 public class ServletFactory {
 	public static ServletFilter filter = null;

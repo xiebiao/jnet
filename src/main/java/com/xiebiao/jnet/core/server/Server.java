@@ -1,4 +1,4 @@
-package xnet.core.server;
+package com.xiebiao.jnet.core.server;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -13,7 +13,8 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import xnet.core.util.IOBuffer;
+import com.xiebiao.jnet.core.util.IOBuffer;
+
 
 /**
  * server，服务实例

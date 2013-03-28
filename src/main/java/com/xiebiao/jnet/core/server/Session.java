@@ -1,11 +1,12 @@
-package xnet.core.server;
+package com.xiebiao.jnet.core.server;
 
 import java.nio.channels.SocketChannel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import xnet.core.util.IOBuffer;
+import com.xiebiao.jnet.core.util.IOBuffer;
+
 
 /**
  * session，表示一次会话

@@ -1,4 +1,4 @@
-package xnet.core.util;
+package com.xiebiao.jnet.core.util;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;

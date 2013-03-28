@@ -1,4 +1,4 @@
-package xnet.core.client;
+package com.xiebiao.jnet.core.client;
 
 import java.net.InetSocketAddress;
 

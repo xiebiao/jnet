@@ -1,4 +1,4 @@
-package xnet.core.server;
+package com.xiebiao.jnet.core.server;
 
 /**
  * 全局配置

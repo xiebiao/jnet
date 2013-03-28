@@ -1,4 +1,4 @@
-package xnet.core.util;
+package com.xiebiao.jnet.core.util;
 
 public class StringUtil {
 	public static String dumpAsHex(byte[] byteBuffer, int length) {

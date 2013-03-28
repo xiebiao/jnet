@@ -1,10 +1,11 @@
-package xnet.core.http;
+package com.xiebiao.jnet.core.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import xnet.core.server.Session;
-import xnet.core.util.IOBuffer;
+import com.xiebiao.jnet.core.server.Session;
+import com.xiebiao.jnet.core.util.IOBuffer;
+
 
 public class HttpSession extends Session {
 	private static final Logger logger = LoggerFactory.getLogger(HttpSession.class);

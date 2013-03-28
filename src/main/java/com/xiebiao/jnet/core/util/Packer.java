@@ -1,4 +1,4 @@
-package xnet.core.util;
+package com.xiebiao.jnet.core.util;
 
 /**
  * java版二进制打包类

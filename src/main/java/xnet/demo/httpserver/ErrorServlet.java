@@ -1,8 +1,8 @@
 package xnet.demo.httpserver;
 
-import xnet.core.http.Request;
-import xnet.core.http.Response;
-import xnet.core.http.Servlet;
+import com.xiebiao.jnet.core.http.Request;
+import com.xiebiao.jnet.core.http.Response;
+import com.xiebiao.jnet.core.http.Servlet;
 
 public class ErrorServlet implements Servlet {
 

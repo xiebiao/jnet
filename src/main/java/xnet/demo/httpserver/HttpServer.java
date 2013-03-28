@@ -2,10 +2,11 @@ package xnet.demo.httpserver;
 
 import org.apache.log4j.PropertyConfigurator;
 
-import xnet.core.http.HttpSession;
-import xnet.core.http.ServletFactory;
-import xnet.core.http.ServletFilter;
-import xnet.core.server.*; 
+import com.xiebiao.jnet.core.http.HttpSession;
+import com.xiebiao.jnet.core.http.ServletFactory;
+import com.xiebiao.jnet.core.http.ServletFilter;
+import com.xiebiao.jnet.core.server.*;
+
 
 public class HttpServer {
 	public static void main(String[] args) throws Exception {

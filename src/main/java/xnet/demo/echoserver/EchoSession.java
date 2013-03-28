@@ -3,8 +3,9 @@ package xnet.demo.echoserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import xnet.core.server.Session;
-import xnet.core.util.IOBuffer;
+import com.xiebiao.jnet.core.server.Session;
+import com.xiebiao.jnet.core.util.IOBuffer;
+
 
 public class EchoSession extends Session {
 	private static final Logger logger = LoggerFactory.getLogger(EchoSession.class);

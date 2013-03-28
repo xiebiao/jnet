@@ -1,4 +1,4 @@
-package xnet.core.util;
+package com.xiebiao.jnet.core.util;
 
 import java.nio.channels.SocketChannel;
 

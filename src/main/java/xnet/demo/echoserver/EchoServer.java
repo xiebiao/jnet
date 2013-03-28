@@ -2,7 +2,8 @@ package xnet.demo.echoserver;
 
 import org.apache.log4j.PropertyConfigurator;
 
-import xnet.core.server.*;
+import com.xiebiao.jnet.core.server.*;
+
 
 public class EchoServer {
 	public static void main(String[] args) throws Exception {

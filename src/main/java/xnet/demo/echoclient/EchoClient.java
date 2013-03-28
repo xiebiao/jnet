@@ -5,7 +5,8 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-import xnet.core.client.Connection;
+import com.xiebiao.jnet.core.client.Connection;
+
 
 public class EchoClient {
 	public static void main(String[] args) throws Exception {

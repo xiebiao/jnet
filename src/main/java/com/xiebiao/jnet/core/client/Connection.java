@@ -1,4 +1,4 @@
-package xnet.core.client;
+package com.xiebiao.jnet.core.client;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -12,8 +12,9 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import xnet.core.util.IOBuffer;
-import xnet.core.util.NetIo;
+import com.xiebiao.jnet.core.util.IOBuffer;
+import com.xiebiao.jnet.core.util.NetIo;
+
 
 /**
  * client连接对象

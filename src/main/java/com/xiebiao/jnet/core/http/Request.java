@@ -1,4 +1,4 @@
-package xnet.core.http;
+package com.xiebiao.jnet.core.http;
 
 import java.util.HashMap;
 import java.util.Map;

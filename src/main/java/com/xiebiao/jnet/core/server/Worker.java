@@ -1,4 +1,4 @@
-package xnet.core.server;
+package com.xiebiao.jnet.core.server;
 
 import java.io.IOException;
 import java.nio.channels.ClosedChannelException;
@@ -16,8 +16,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import xnet.core.util.IOBuffer;
-import xnet.core.util.NetIo;
+import com.xiebiao.jnet.core.util.IOBuffer;
+import com.xiebiao.jnet.core.util.NetIo;
+
 
 /**
  * 工作线程

@@ -1,4 +1,4 @@
-package xnet.core.server;
+package com.xiebiao.jnet.core.server;
 
 import java.util.ArrayList;
 import java.util.Iterator;
