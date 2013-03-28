@@ -1,8 +1,8 @@
 package xnet.demo.httpserver;
 
-import jnet.core.http.Request;
-import jnet.core.http.Response;
-import jnet.core.http.Servlet;
+import jnet.protocol.http11.Request;
+import jnet.protocol.http11.Response;
+import jnet.protocol.http11.Servlet;
 
 public class ErrorServlet implements Servlet {
 

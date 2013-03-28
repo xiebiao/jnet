@@ -1,9 +1,9 @@
 package xnet.demo.httpserver;
 
-import jnet.core.http.HttpSession;
-import jnet.core.http.ServletFactory;
-import jnet.core.http.ServletFilter;
 import jnet.core.server.*;
+import jnet.protocol.http11.HttpSession;
+import jnet.protocol.http11.ServletFactory;
+import jnet.protocol.http11.ServletFilter;
 
 import org.apache.log4j.PropertyConfigurator;
 
