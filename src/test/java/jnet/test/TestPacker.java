@@ -1,4 +1,4 @@
-package xnet.test;
+package jnet.test;
 
 
 import jnet.core.util.Packer;

@@ -1,4 +1,4 @@
-package xnet.test;
+package jnet.test;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;

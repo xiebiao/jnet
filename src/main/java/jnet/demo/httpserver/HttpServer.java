@@ -1,4 +1,4 @@
-package xnet.demo.httpserver;
+package jnet.demo.httpserver;
 
 import jnet.core.server.*;
 import jnet.protocol.http11.HttpSession;
