@@ -10,7 +10,7 @@ import java.nio.channels.SocketChannel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import jnet.core.util.IOBuffer;
+import jnet.core.utils.IOBuffer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,15 +25,14 @@ import org.slf4j.LoggerFactory;
 public abstract class Server<T extends Session> {
 	private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
-	private Settings config;
+	private Configuration config;
 	private Worker[] workers;
 	private Selector selector;
 	private ServerSocketChannel socket;
 	private int nextWorkerIndex = 0;
-	private SessionManager sessionManager = SessionManager.getInstance();
 	private Class<T> sessionHandler;
 
-	public Server(Settings config, Class<T> sessionHandler) {
+	public Server(Configuration config, Class<T> sessionHandler) {
 		this.config = config;
 		this.sessionHandler = sessionHandler;
 		workers = new Worker[config.threads];
@@ -50,11 +49,11 @@ public abstract class Server<T extends Session> {
 			Session session = this.sessionHandler.newInstance();
 			session.setId(i);
 			session.setConfig(config);
-			session.setEvent(Session.EVENT_READ);
+			session.setCurrentEvent(Session.EVENT_READ);
 			session.setInuse(false);
 			session.setReadBuffer(new IOBuffer());
 			session.setWriteBuffer(new IOBuffer());
-			sessionManager.addSession(session);
+			SessionManager.addSession(session);
 		}
 
 		try {
@@ -76,7 +75,7 @@ public abstract class Server<T extends Session> {
 			try {
 				csocket = socket.accept();
 				csocket.configureBlocking(false);
-				Session session = SessionManager.openSession();
+				Session session = SessionManager.getSession();
 				if (session == null) {
 					logger.error("Too many connection");
 					csocket.close();

@@ -1,7 +1,7 @@
 package jnet.protocol.http11;
 
 import jnet.core.server.Session;
-import jnet.core.util.IOBuffer;
+import jnet.core.utils.IOBuffer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

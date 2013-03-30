@@ -9,8 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import jnet.core.util.IOBuffer;
-import jnet.core.util.IOUtils;
+import jnet.core.utils.IOBuffer;
+import jnet.core.utils.IOUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

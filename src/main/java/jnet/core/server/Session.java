@@ -2,7 +2,7 @@ package jnet.core.server;
 
 import java.nio.channels.SocketChannel;
 
-import jnet.core.util.IOBuffer;
+import jnet.core.utils.IOBuffer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

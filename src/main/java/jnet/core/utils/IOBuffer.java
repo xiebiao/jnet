@@ -1,4 +1,4 @@
-package jnet.core.util;
+package jnet.core.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -544,6 +544,6 @@ public class IOBuffer {
 	}
 
 	public String toString() {
-		return StringUtil.dumpAsHex(getBytes(0, limit()), limit());
+		return StringUtils.dumpAsHex(getBytes(0, limit()), limit());
 	}
 }

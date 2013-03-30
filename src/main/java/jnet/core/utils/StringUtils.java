@@ -1,4 +1,4 @@
-package jnet.core.util;
+package jnet.core.utils;
 
 public class StringUtils {
 	public static String dumpAsHex(byte[] byteBuffer, int length) {

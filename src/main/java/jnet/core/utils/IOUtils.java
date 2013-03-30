@@ -1,4 +1,4 @@
-package jnet.core.util;
+package jnet.core.utils;
 
 import java.nio.channels.SocketChannel;
 
