@@ -50,7 +50,7 @@ public final class SessionManager {
 	 * @param session
 	 */
 	public static void closeSession(Session session) {
-		logger.debug(session + " closed,put in pool");
+		logger.debug(session + "closed,put it back to pool");
 		synchronized (lock) {
 			session.setInuse(false);
 		}
