@@ -1,33 +1,38 @@
 package jnet.demo.httpserver;
 
-import jnet.core.server.*;
+import jnet.core.server.Server;
+import jnet.core.server.Settings;
 import jnet.protocol.http11.HttpSession;
 import jnet.protocol.http11.ServletFactory;
 import jnet.protocol.http11.ServletFilter;
 
-import org.apache.log4j.PropertyConfigurator;
+public class HttpServer extends Server<HttpSession> {
 
+	public HttpServer(Settings config, Class<HttpSession> clazz) {
+		super(config, clazz);
+	}
 
-
-public class HttpServer {
 	public static void main(String[] args) throws Exception {
+		int threads = 5;
+		int port = 8080;
 		if (args.length != 2) {
 			System.out.println(HttpServer.class + " PORT THREAD_NUM\n");
-			return;
+		} else {
+			threads = Integer.parseInt(args[1]);
+			port = Short.parseShort(args[0]);
 		}
-
 		Settings config = new Settings();
-		config.session = HttpSession.class;
-		PropertyConfigurator.configure("./conf/log4j.properties");
-		config.threadNum = Integer.parseInt(args[1]);
-		config.port = Short.parseShort(args[0]);
-		config.rTimeout = 1000;
-		config.wTimeout = 1000;
-		config.ip = "0.0.0.0";
+		config.threads = threads;
+		config.port = port;
+		config.readTimeout = 1000;
+		config.writeTimeout = 1000;
+		config.ip = "localhost";
 		config.keepalive = true;
-		config.maxConnection = 1000;
-		Server server = new Server(config);
+		config.maxConnection = 100;
+		HttpServer server = new HttpServer(config, HttpSession.class);
+		// server.setSessionHandler(HttpSession.class);
 		ServletFactory.filter = (ServletFilter) new Filter();
 		server.start();
 	}
+
 }

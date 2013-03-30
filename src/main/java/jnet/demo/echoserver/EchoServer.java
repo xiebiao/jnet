@@ -1,32 +1,26 @@
 package jnet.demo.echoserver;
 
-import java.io.InputStream;
-import java.util.Properties;
-
 import jnet.core.server.Server;
 import jnet.core.server.Settings;
 
-import org.apache.log4j.PropertyConfigurator;
+public class EchoServer extends Server<EchoSession> {
+	public EchoServer(Settings config, Class<EchoSession> clazz) {
+		super(config, clazz);
+		// TODO Auto-generated constructor stub
+	}
 
-public class EchoServer {
 	public static void main(String[] args) throws Exception {
 		try {
 
 			Settings config = new Settings();
-			config.session = EchoSession.class;
-			InputStream in = Thread.currentThread().getContextClassLoader()
-					.getResourceAsStream("log4j.properties");
-			Properties pro = new Properties();
-			pro.load(in);
-			PropertyConfigurator.configure(pro);
-			config.threadNum = 5;
+			config.threads = 5;
 			config.port = 8080;
-			config.rTimeout = 3000;
-			config.wTimeout = 3000;
-			config.ip = "0.0.0.0";
+			config.readTimeout = 3000;
+			config.writeTimeout = 3000;
+			config.ip = "localhost";
 			config.keepalive = true;
-			config.maxConnection = 1000;
-			Server server = new Server(config);
+			config.maxConnection = 100;
+			EchoServer server = new EchoServer(config, EchoSession.class);
 			server.start();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

@@ -14,4 +14,8 @@ public class Request {
 		cookie.clear();
 		params.clear();
 	}
+
+	public String toString() {
+		return header.toString() + "\n" + params.toString();
+	}
 }

@@ -6,10 +6,9 @@ import jnet.core.util.IOBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 public class HttpSession extends Session {
-	private static final Logger logger = LoggerFactory.getLogger(HttpSession.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(HttpSession.class);
 
 	static final int BUF_SIZE = 2048;
 	static final int STATE_READ_HEAD = 0;
@@ -22,8 +21,8 @@ public class HttpSession extends Session {
 	int bodyStartPos = 0;
 
 	void parseHeader(String header) throws Exception {
-		logger.debug("DEBUG ENTER");
-		
+
+		logger.debug(this.toString() + "Parse HTTP Header");
 		String[] lines = header.split("\r\n");
 		if (lines.length == 0) {
 			throw new Exception("invalid header");
@@ -59,10 +58,11 @@ public class HttpSession extends Session {
 		if (bodyLen < 0) {
 			throw new Exception("invalid header");
 		}
+		logger.debug(request.toString());
 	}
 
 	void parseBody(String body) {
-		logger.debug("DEBUG ENTER");
+		logger.debug(this.toString() + "Parse HTTP Body");
 		// 解析参数
 		String paramStr = body;
 		String url = request.header.get(HttpAttr.HEAD_URL);
@@ -98,16 +98,12 @@ public class HttpSession extends Session {
 	@Override
 	public void complateRead(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
-		logger.debug("DEBUG ENTER");
-		
 		complateReadOnce(readBuf, writeBuf);
 	}
 
 	@Override
 	public void complateReadOnce(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
-		logger.debug("DEBUG ENTER");
-		
 		if (state == STATE_READ_HEAD) {
 			String buf = readBuf.getString("ASCII");
 			int endPos = buf.indexOf("\r\n\r\n");
@@ -115,7 +111,6 @@ public class HttpSession extends Session {
 				// header不完整，继续接收
 				remainToRead(BUF_SIZE);
 			}
-
 			// 解析header
 			state = STATE_READ_BODY;
 			String header = buf.substring(0, endPos);
@@ -128,7 +123,6 @@ public class HttpSession extends Session {
 				remainToRead(bodyStartPos + bodyLen - readBuf.position());
 				return;
 			}
-
 			// 解析body
 			state = STATE_READ_HEAD;
 			String body = readBuf.getString(bodyStartPos, bodyLen, "ASCII");
@@ -139,13 +133,11 @@ public class HttpSession extends Session {
 			setNextState(STATE_WRITE);
 			return;
 		}
-
 		remainToRead(BUF_SIZE);
 
 	}
 
 	public void handle(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
-		logger.debug("DEBUG ENTER");
 		// 执行servlet
 		Servlet action = ServletFactory.get(request);
 		if (action == null) {
@@ -158,27 +150,26 @@ public class HttpSession extends Session {
 		writeBuf.position(0);
 		request.reset();
 		response.reset();
-		logger.info("finished a request");
+		logger.debug("Finished a request");
 	}
 
 	@Override
 	public void complateWrite(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
-		logger.debug("DEBUG ENTER");
-		
 		setNextState(STATE_CLOSE);
 	}
- 
 
 	@Override
 	public void open(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
-		logger.debug("DEBUG ENTER");
 		remainToRead(BUF_SIZE);
 	}
 
 	@Override
 	public void timeout(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
-		logger.debug("DEBUG ENTER");
 		setNextState(STATE_CLOSE);
+	}
+
+	public String toString() {
+		return "Session[" + this.getId() + "] ";
 	}
 }

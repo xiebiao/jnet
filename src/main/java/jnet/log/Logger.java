@@ -8,7 +8,7 @@ public interface Logger {
 
 	void warn(String format, Throwable e);
 
-	void debug(String msg);
+	void debug(Object msg);
 
 	void error(String msg);
 

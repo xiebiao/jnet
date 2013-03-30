@@ -22,8 +22,8 @@ public class Slf4jLoggerAdapter implements Logger {
 	}
 
 	@Override
-	public void debug(String msg) {
-		logger.debug(msg);
+	public void debug(Object msg) {
+		logger.debug(msg.toString());
 
 	}
 

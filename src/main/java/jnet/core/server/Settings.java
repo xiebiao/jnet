@@ -4,7 +4,7 @@ public class Settings {
 	/**
 	 * 工作线程数
 	 */
-	public int threadNum;
+	public int threads;
 	/**
 	 * 端口
 	 */
@@ -12,11 +12,11 @@ public class Settings {
 	/**
 	 * 读超时（ms）
 	 */
-	public int rTimeout;
+	public int readTimeout;
 	/**
 	 * 写超时（ms）
 	 */
-	public int wTimeout;
+	public int writeTimeout;
 	/**
 	 * IP
 	 */
@@ -25,10 +25,6 @@ public class Settings {
 	 * 最大连接数
 	 */
 	public int maxConnection;
-	/**
-	 * session类
-	 */
-	public Class<?> session = null;
 	/**
 	 * 是否长连接
 	 */

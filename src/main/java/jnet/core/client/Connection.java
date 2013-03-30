@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 import jnet.core.util.IOBuffer;
-import jnet.core.util.NetIo;
+import jnet.core.util.IOUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +72,7 @@ public class Connection {
 			}
 		}
 		if (socket == null) {
-			throw new Exception("connect all servers error");
+			throw new Exception("Can't connect servers");
 		}
 	}
 
@@ -166,7 +166,7 @@ public class Connection {
 					break;
 				}
 
-				NetIo.write(socket, writeBuf);
+				IOUtils.write(socket, writeBuf);
 				if (writeBuf.remaining() == 0) {
 					break;
 				}
@@ -234,7 +234,7 @@ public class Connection {
 					logger.warn("read time out");
 					break;
 				}
-				NetIo.read(socket, readBuf);
+				IOUtils.read(socket, readBuf);
 				if (readBuf.remaining() == 0) {
 					break;
 				}

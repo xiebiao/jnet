@@ -5,8 +5,9 @@ import java.nio.channels.SocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NetIo {
-	private static final Logger logger = LoggerFactory.getLogger(NetIo.class);
+
+public final class IOUtils {
+	private static Logger logger = LoggerFactory.getLogger(IOUtils.class);
 
 	/**
 	 * 网络读操作
@@ -17,9 +18,8 @@ public class NetIo {
 	 * @throws Exception
 	 */
 	public static int read(SocketChannel socket, IOBuffer buf) throws Exception {
-		logger.debug("DEBUG ENTER");
 		int len = socket.read(buf.getBuffer());
-		logger.debug("nread " + len + " bytes");
+		logger.debug("Read " + len + " bytes");
 		if (len < 0) {
 			throw new Exception("IO Error");
 		}
@@ -36,10 +36,8 @@ public class NetIo {
 	 */
 	public static int write(SocketChannel socket, IOBuffer buf)
 			throws Exception {
-		logger.debug("DEBUG ENTER");
-
 		int len = socket.write(buf.getBuffer());
-		logger.debug("nwrite " + len + " bytes");
+		logger.debug("Write " + len + " bytes");
 		if (len < 0) {
 			throw new Exception("IO Error");
 		}

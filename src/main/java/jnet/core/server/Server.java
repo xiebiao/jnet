@@ -11,21 +11,32 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import jnet.core.util.IOBuffer;
-import jnet.log.Logger;
-import jnet.log.LoggerFactory;
 
-public class Server {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * <p>
+ * </p>
+ * 
+ * @author xiebiao
+ * 
+ */
+public abstract class Server<T extends Session> {
 	private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
-	Settings config;
-	Worker[] workers;
-	Selector selector;
-	ServerSocketChannel socket;
-	int nextWorkerIndex = 0;
+	private Settings config;
+	private Worker[] workers;
+	private Selector selector;
+	private ServerSocketChannel socket;
+	private int nextWorkerIndex = 0;
+	private SessionManager sessionManager = SessionManager.getInstance();
+	private Class<T> sessionHandler;
 
-	public Server(Settings config) {
+	public Server(Settings config, Class<T> sessionHandler) {
 		this.config = config;
-		workers = new Worker[config.threadNum];
+		this.sessionHandler = sessionHandler;
+		workers = new Worker[config.threads];
 	}
 
 	/**
@@ -34,26 +45,26 @@ public class Server {
 	 * @throws Exception
 	 */
 	public void start() throws Exception {
-		logger.debug("DEBUG ENTER");
-
+		logger.debug("Server start");
 		for (int i = 0; i < config.maxConnection; i++) {
-			Session session = (Session) config.session.newInstance();
-			session.config = config;
-			session.event = Session.EVENT_READ;
-			session.inuse = false;
-			session.readBuf = new IOBuffer();
-			session.writeBuf = new IOBuffer();
-			Sessions.addSession(session);
+			Session session = this.sessionHandler.newInstance();
+			session.setId(i);
+			session.setConfig(config);
+			session.setEvent(Session.EVENT_READ);
+			session.setInuse(false);
+			session.setReadBuffer(new IOBuffer());
+			session.setWriteBuffer(new IOBuffer());
+			sessionManager.addSession(session);
 		}
 
 		try {
-			initServerSocket();
+			init();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
 		}
 
-		ExecutorService pool = Executors.newFixedThreadPool(config.threadNum);
+		ExecutorService pool = Executors.newFixedThreadPool(config.threads);
 		for (int i = 0; i < workers.length; i++) {
 			workers[i] = new Worker();
 			pool.execute(workers[i]);
@@ -65,13 +76,13 @@ public class Server {
 			try {
 				csocket = socket.accept();
 				csocket.configureBlocking(false);
-				Session session = Sessions.openSession();
+				Session session = SessionManager.openSession();
 				if (session == null) {
-					logger.warn("too many connection");
+					logger.error("Too many connection");
 					csocket.close();
 					continue;
 				} else {
-					session.socket = csocket;
+					session.setSocket(csocket);
 					handleNewSession(session);
 				}
 			} catch (IOException e) {
@@ -83,13 +94,7 @@ public class Server {
 		}
 	}
 
-	/**
-	 * 初始化server套接字
-	 * 
-	 * @throws IOException
-	 */
-	public void initServerSocket() throws IOException {
-		logger.debug("DEBUG ENTER");
+	public void init() throws IOException {
 
 		selector = Selector.open();
 		socket = ServerSocketChannel.open();
@@ -99,6 +104,7 @@ public class Server {
 				new InetSocketAddress(InetAddress.getByName(config.ip),
 						config.port));
 		socket.register(selector, SelectionKey.OP_ACCEPT);
+		logger.debug("Server start on " + config.ip + ":" + config.port + "");
 	}
 
 	/**
@@ -107,10 +113,8 @@ public class Server {
 	 * @param session
 	 */
 	private void handleNewSession(Session session) {
-		logger.debug("DEBUG ENTER");
-
 		workers[nextWorkerIndex].addNewSession(session);
-		nextWorkerIndex = (nextWorkerIndex + 1) % config.threadNum;
+		nextWorkerIndex = (nextWorkerIndex + 1) % config.threads;
 	}
 
 }

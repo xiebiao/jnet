@@ -7,10 +7,20 @@ import jnet.core.util.IOBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+/**
+ * <p>
+ * 会话
+ * </p>
+ * 
+ * @author xiebiao
+ * 
+ */
 public abstract class Session {
 	private static final Logger logger = LoggerFactory.getLogger(Session.class);
-
+	/**
+	 * session id
+	 */
+	private int id = 0;
 	/**
 	 * 当前的session 等待的IO状态 3种状态：读状态,写状态,关闭
 	 */
@@ -28,69 +38,34 @@ public abstract class Session {
 	/**
 	 * 下一次超时时间点（时间戳）
 	 */
-	long nextTimeout = 0;
-	/**
-	 * 当前状态，读OR写
-	 */
-	int state;
+	private long nextTimeout = 0;
+
+	private int currentState;
 	/**
 	 * 当前的事件
 	 */
-	int event = Session.EVENT_READ;
-	/**
-	 * 读buffer
-	 */
-	IOBuffer readBuf = null;
-	/**
-	 * 写buffer
-	 */
-	IOBuffer writeBuf = null;
-	/**
-	 * socket
-	 */
-	SocketChannel socket = null;
+	private int event = Session.EVENT_READ;
+
+	private IOBuffer readBuffer = null;
+
+	private IOBuffer writeBuffer = null;
+
+	private SocketChannel socket = null;
 	/**
 	 * 全局配置
 	 */
-	Settings config = null;
-	/**
-	 * 正在被使用
-	 */
-	boolean inuse = false;
+	private Settings config = null;
+	private boolean inuse = false;
 
-	/**
-	 * 连接建立回调函数
-	 * 
-	 * @param readBuf
-	 *            请求包
-	 * @param writeBuf
-	 *            响应包
-	 * @throws Exception
-	 */
+	public Session() {
+	}
+
 	public abstract void open(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception;
 
-	/**
-	 * 所有数据读取完成
-	 * 
-	 * @param readBuf
-	 *            请求包
-	 * @param writeBuf
-	 *            响应包
-	 * @throws Exception
-	 */
 	public abstract void complateRead(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception;
 
-	/**
-	 * 本次数据读取完成,默认不作处理
-	 * 
-	 * @param readBuf
-	 *            请求包
-	 * @param writeBuf
-	 *            响应包
-	 * @throws Exception
-	 */
 	public void complateReadOnce(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
 		logger.debug("DEBUG ENTER");
@@ -108,78 +83,118 @@ public abstract class Session {
 	public abstract void complateWrite(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception;
 
-	/**
-	 * 本次数据写入完成,默认不作处理
-	 * 
-	 * @param readBuf
-	 *            请求包
-	 * @param writeBuf
-	 *            响应包
-	 * @throws Exception
-	 */
 	public void complateWriteOnce(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
 		logger.debug("DEBUG ENTER");
 	}
 
-	/**
-	 * 连接关闭后的回调函数,默认不作处理
-	 * 
-	 * @param in
-	 *            请求包
-	 * @param out
-	 *            响应包
-	 * @throws Exception
-	 */
 	public void close() {
-		logger.debug("DEBUG ENTER");
 	}
 
-	/**
-	 * 超时处理，默认关闭链接
-	 * 
-	 * @throws Exception
-	 */
 	public void timeout(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
-		logger.warn("time out,state=" + state);
+		logger.warn("Session time out,state=" + currentState);
 		setNextState(STATE_CLOSE);
 	}
 
-	/**
-	 * 设置状态
-	 * 
-	 * @param state
-	 */
 	public void setNextState(int state) {
-		this.state = state;
-
+		this.currentState = state;
 		if (state == STATE_WRITE) {
-			readBuf.position(0);
-			readBuf.limit(0);
+			readBuffer.position(0);
+			readBuffer.limit(0);
 		} else if (state == STATE_READ) {
-			writeBuf.position(0);
-			writeBuf.limit(0);
+			writeBuffer.position(0);
+			writeBuffer.limit(0);
 		}
 	}
 
-	/**
-	 * 还需读多少字节
-	 * 
-	 * @param remain
-	 */
 	public void remainToRead(int remain) {
-		readBuf.limit(readBuf.position() + remain);
+		readBuffer.limit(readBuffer.position() + remain);
 		setNextState(STATE_READ);
 	}
 
-	/**
-	 * 还需写多少字节
-	 * 
-	 * @param remain
-	 */
 	public void remainToWrite(int remain) {
-		writeBuf.limit(writeBuf.position() + remain);
+		writeBuffer.limit(writeBuffer.position() + remain);
 		setNextState(STATE_WRITE);
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getState() {
+		return currentState;
+	}
+
+	public void setState(int state) {
+		this.currentState = state;
+	}
+
+	public int getEvent() {
+		return event;
+	}
+
+	public void setEvent(int event) {
+		this.event = event;
+	}
+
+	public IOBuffer getReadBuffer() {
+		return readBuffer;
+	}
+
+	public void setReadBuffer(IOBuffer readBuf) {
+		this.readBuffer = readBuf;
+	}
+
+	public SocketChannel getSocket() {
+		return socket;
+	}
+
+	public void setSocket(SocketChannel socket) {
+		this.socket = socket;
+	}
+
+	public boolean isInuse() {
+		return inuse;
+	}
+
+	public void setInuse(boolean inuse) {
+		this.inuse = inuse;
+	}
+
+	public Settings getConfig() {
+		return config;
+	}
+
+	public void setConfig(Settings config) {
+		this.config = config;
+	}
+
+	public IOBuffer getWriteBuffer() {
+		return writeBuffer;
+	}
+
+	public void setWriteBuffer(IOBuffer writeBuffer) {
+		this.writeBuffer = writeBuffer;
+	}
+
+	public long getNextTimeout() {
+		return nextTimeout;
+	}
+
+	public void setNextTimeout(long nextTimeout) {
+		this.nextTimeout = nextTimeout;
+	}
+
+	public int getCurrentState() {
+		return currentState;
+	}
+
+	public void setCurrentState(int currentState) {
+		this.currentState = currentState;
 	}
 
 }

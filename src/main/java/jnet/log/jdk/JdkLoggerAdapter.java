@@ -21,8 +21,8 @@ public class JdkLoggerAdapter implements Logger {
 	}
 
 	@Override
-	public void debug(String msg) {
-		logger.log(java.util.logging.Level.FINE, msg);
+	public void debug(Object msg) {
+		logger.log(java.util.logging.Level.FINE, msg.toString());
 	}
 
 	@Override
