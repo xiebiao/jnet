@@ -5,7 +5,8 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-import jnet.core.client.Client;
+import com.github.jnet.core.client.Client;
+
 
 public class TestConnection  {
 	private static String host = "www.baidu.com";

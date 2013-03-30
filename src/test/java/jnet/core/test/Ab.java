@@ -2,10 +2,11 @@ package jnet.core.test;
 
 import java.io.UnsupportedEncodingException;
 
-import jnet.core.client.Client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.jnet.core.client.Client;
 
 public class Ab implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(Ab.class);

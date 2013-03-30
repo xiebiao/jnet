@@ -1,6 +1,7 @@
 package jnet.test;
 
-import jnet.core.utils.Packer;
+import com.github.jnet.utils.Packer;
+
 import junit.framework.Assert;
 
 public class TestPacker {
