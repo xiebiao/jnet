@@ -13,10 +13,10 @@ public class Filter implements ServletFilter {
 		if (pos >= 0) {
 			url = url.substring(0,pos);
 		}
-		if (url.indexOf("echo.action") >= 0) {
+		if (url.indexOf("echo") >= 0) {
 			return new EchoServlet();
 		}
-		if (url.indexOf("time.action") >= 0) {
+		if (url.indexOf("time") >= 0) {
 			return new TimeServlet();
 		}
 		return new ErrorServlet();

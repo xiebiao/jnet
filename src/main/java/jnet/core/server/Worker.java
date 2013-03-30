@@ -21,13 +21,10 @@ import org.slf4j.LoggerFactory;
 
 public class Worker implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(Worker.class);
-	Selector selector;
-	Boolean lock = false;
-	Queue<Session> newSessionQueue = new ConcurrentLinkedQueue<Session>();
-	/**
-	 * 超时的session集合， TreeSet保证集合中的session按超时时间升序排列
-	 */
-	Set<Session> timeoutSessionSet = new TreeSet<Session>(
+	private Selector selector;
+	private Queue<Session> newSessionQueue = new ConcurrentLinkedQueue<Session>();
+	private List<Session> eventSessionList = new ArrayList<Session>();
+	private Set<Session> timeoutSessionSet = new TreeSet<Session>(
 			new Comparator<Session>() {
 				public int compare(Session a, Session b) {
 					if (a.getNextTimeout() - b.getNextTimeout() == 0) {
@@ -39,10 +36,6 @@ public class Worker implements Runnable {
 					}
 				}
 			});
-	/**
-	 * 有IO事件或超时的session队列
-	 */
-	List<Session> eventSessionList = new ArrayList<Session>();
 
 	public Worker() throws IOException {
 		selector = Selector.open();
@@ -80,7 +73,7 @@ public class Worker implements Runnable {
 		}
 	}
 
-	public void select() throws IOException {
+	private void select() throws IOException {
 
 		long timeout = 0;
 		Iterator<Session> sessionIter = timeoutSessionSet.iterator();
@@ -91,37 +84,23 @@ public class Worker implements Runnable {
 		}
 		selector.select(timeout);
 		long now = System.currentTimeMillis();
-
-		// 处理新来的session
 		handleNewSession();
-		// 检查有IO或超时session
 		checkEventSession(now);
-		// 处理session事件
 		handleEventSession();
 	}
 
-	/**
-	 * 处理新增连接
-	 */
 	public void handleNewSession() {
 		while (true) {
 			Session session = newSessionQueue.poll();
 			if (session == null) {
 				break;
 			}
-			logger.debug("Handle a new " + session);
 			initNewSession(session);
 		}
 	}
 
-	/**
-	 * 为工作线程增加一个session，server线程中调用
-	 * 
-	 * @param session
-	 */
 	public void addNewSession(Session session) {
 		newSessionQueue.add(session);
-		// 唤醒阻塞中的select
 		selector.wakeup();
 	}
 
@@ -147,14 +126,7 @@ public class Worker implements Runnable {
 
 	}
 
-	/**
-	 * 当执行回调函数后更新session
-	 * 
-	 * @param session
-	 * @throws ClosedChannelException
-	 */
 	private void updateSession(Session session) throws ClosedChannelException {
-		// 根据session状态注册读或写事件
 		if (session.getCurrentState() == Session.STATE_READ
 				&& session.getReadBuffer().remaining() > 0) {
 			if (session.getConfig().readTimeout > 0) {
@@ -163,7 +135,6 @@ public class Worker implements Runnable {
 			}
 			session.getSocket().register(selector, SelectionKey.OP_READ,
 					session);
-			// 加入到超时session队列
 			addTimeoutSession(session);
 		} else if (session.getCurrentState() == Session.STATE_WRITE
 				&& session.getWriteBuffer().remaining() > 0) {
@@ -173,7 +144,6 @@ public class Worker implements Runnable {
 			}
 			session.getSocket().register(selector, SelectionKey.OP_WRITE,
 					session);
-			// 加入到超时session队列
 			addTimeoutSession(session);
 		} else {
 			close(session);
@@ -192,17 +162,17 @@ public class Worker implements Runnable {
 			SelectionKey key = keyIter.next();
 			keyIter.remove();
 			Session session = (Session) key.attachment();
-			session.setEvent(session.getCurrentState() == Session.EVENT_READ ? Session.EVENT_READ
-					: Session.EVENT_WRITE);
+//			session.setCurrentEvent(session.getCurrentState() == Session.EVENT_READ ? Session.EVENT_READ
+//					: Session.EVENT_WRITE);
 			eventSessionList.add(session);
-			timeoutSessionSet.remove(session);
+			//timeoutSessionSet.remove(session);
 		}
 
 		Iterator<Session> sessionIter = timeoutSessionSet.iterator();
 		while (sessionIter.hasNext()) {
 			Session session = sessionIter.next();
 			if (session.getNextTimeout() <= time) {
-				session.setEvent(Session.EVENT_TIMEOUT);
+				session.setCurrentEvent(Session.EVENT_TIMEOUT);
 				eventSessionList.add(session);
 				sessionIter.remove();
 			} else {
@@ -221,7 +191,7 @@ public class Worker implements Runnable {
 		while (eventIter.hasNext()) {
 			Session session = eventIter.next();
 			try {
-				if (session.getEvent() == Session.EVENT_TIMEOUT) {
+				if (session.getCurrentEvent() == Session.EVENT_TIMEOUT) {
 					timeoutEvent(session);
 				} else if (session.getCurrentState() == Session.STATE_READ) {
 					readEvent(session);
@@ -243,7 +213,7 @@ public class Worker implements Runnable {
 	 */
 	private void timeoutEvent(Session session) {
 		try {
-			session.timeout(session.getReadBuffer(), session.getWriteBuffer());
+			session.timeout();
 			updateSession(session);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -255,30 +225,25 @@ public class Worker implements Runnable {
 			int len = 0;
 			int curState = session.getCurrentState();
 			if (curState == Session.STATE_READ) {
-				len = IOUtils.read(session.getSocket(), buf);// 读数据
+				len = IOUtils.read(session.getSocket(), buf);
 			} else {
-				len = IOUtils.write(session.getSocket(), buf);// 读数据
+				len = IOUtils.write(session.getSocket(), buf);
 			}
-			int remain = buf.remaining();// 剩余字节数
-
+			int remain = buf.remaining();
 			if (curState == Session.STATE_READ) {
 				if (remain == 0) {
-					// 当前数据IO完成
 					session.complateRead(session.getReadBuffer(),
 							session.getWriteBuffer());
 				} else {
-					// 当前数据IO未完成
-					session.complateReadOnce(session.getReadBuffer(),
+					session.reading(session.getReadBuffer(),
 							session.getWriteBuffer());
 				}
 			} else {
 				if (remain == 0) {
-					// 当前数据IO完成
 					session.complateWrite(session.getReadBuffer(),
 							session.getWriteBuffer());
 				} else {
-					// 当前数据IO未完成
-					session.complateWriteOnce(session.getReadBuffer(),
+					session.writing(session.getReadBuffer(),
 							session.getWriteBuffer());
 				}
 			}

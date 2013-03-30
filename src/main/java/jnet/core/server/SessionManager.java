@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author xiebiao
  * 
  */
-public class SessionManager {
+public final class SessionManager {
 	private static final Logger logger = LoggerFactory
 			.getLogger(SessionManager.class);
 	private static List<Session> sessionList = new ArrayList<Session>();
@@ -29,14 +29,14 @@ public class SessionManager {
 		return sessionManager;
 	}
 
-	public static Session openSession() {
+	public static Session getSession() {
 		synchronized (lock) {
 			Iterator<Session> sessionIter = sessionList.iterator();
 			while (sessionIter.hasNext()) {
 				Session session = sessionIter.next();
 				if (!session.isInuse()) {
 					session.setInuse(true);
-					logger.debug(session.toString());
+					logger.debug("Get "+session.toString());
 					return session;
 				}
 			}
@@ -56,7 +56,7 @@ public class SessionManager {
 		}
 	}
 
-	public void addSession(Session session) {
+	public static void addSession(Session session) {
 		logger.debug("Add " + session + " to pool");
 		sessionList.add(session);
 	}

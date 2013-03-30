@@ -18,7 +18,7 @@ public class EchoServer extends Server<EchoSession> {
 			config.readTimeout = 3000;
 			config.writeTimeout = 3000;
 			config.ip = "localhost";
-			config.keepalive = true;
+			//config.keepalive = true;
 			config.maxConnection = 100;
 			EchoServer server = new EchoServer(config, EchoSession.class);
 			server.start();

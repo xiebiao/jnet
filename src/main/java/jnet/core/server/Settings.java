@@ -28,6 +28,6 @@ public class Settings {
 	/**
 	 * 是否长连接
 	 */
-	public boolean keepalive;
+	//public boolean keepalive;
 
 }

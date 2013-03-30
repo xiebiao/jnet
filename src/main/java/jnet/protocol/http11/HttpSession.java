@@ -98,12 +98,13 @@ public class HttpSession extends Session {
 	@Override
 	public void complateRead(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
-		complateReadOnce(readBuf, writeBuf);
+		reading(readBuf, writeBuf);
 	}
 
 	@Override
-	public void complateReadOnce(IOBuffer readBuf, IOBuffer writeBuf)
+	public void reading(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
+		logger.debug(this.toString() + " reading...");
 		if (state == STATE_READ_HEAD) {
 			String buf = readBuf.getString("ASCII");
 			int endPos = buf.indexOf("\r\n\r\n");
@@ -164,12 +165,13 @@ public class HttpSession extends Session {
 		remainToRead(BUF_SIZE);
 	}
 
-	@Override
-	public void timeout(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
-		setNextState(STATE_CLOSE);
-	}
-
 	public String toString() {
 		return "Session[" + this.getId() + "] ";
+	}
+
+	@Override
+	public void writing(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
+		logger.debug(this.toString() + " writing...");
+		
 	}
 }

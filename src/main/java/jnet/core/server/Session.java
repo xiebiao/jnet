@@ -7,14 +7,6 @@ import jnet.core.util.IOBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * <p>
- * 会话
- * </p>
- * 
- * @author xiebiao
- * 
- */
 public abstract class Session {
 	private static final Logger logger = LoggerFactory.getLogger(Session.class);
 	/**
@@ -44,7 +36,7 @@ public abstract class Session {
 	/**
 	 * 当前的事件
 	 */
-	private int event = Session.EVENT_READ;
+	private int currentEvent = Session.EVENT_READ;
 
 	private IOBuffer readBuffer = null;
 
@@ -66,10 +58,8 @@ public abstract class Session {
 	public abstract void complateRead(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception;
 
-	public void complateReadOnce(IOBuffer readBuf, IOBuffer writeBuf)
-			throws Exception {
-		logger.debug("DEBUG ENTER");
-	}
+	public abstract void reading(IOBuffer readBuf, IOBuffer writeBuf)
+			throws Exception;
 
 	/**
 	 * 所有数据写入完成
@@ -83,16 +73,13 @@ public abstract class Session {
 	public abstract void complateWrite(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception;
 
-	public void complateWriteOnce(IOBuffer readBuf, IOBuffer writeBuf)
-			throws Exception {
-		logger.debug("DEBUG ENTER");
-	}
+	public abstract void writing(IOBuffer readBuf, IOBuffer writeBuf)
+			throws Exception;
 
 	public void close() {
 	}
 
-	public void timeout(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
-		logger.warn("Session time out,state=" + currentState);
+	public void timeout() throws Exception {
 		setNextState(STATE_CLOSE);
 	}
 
@@ -104,6 +91,17 @@ public abstract class Session {
 		} else if (state == STATE_READ) {
 			writeBuffer.position(0);
 			writeBuffer.limit(0);
+		}
+		switch (state) {
+		case STATE_READ:
+			logger.debug(this.toString() + " STATE_READ");
+			break;
+		case STATE_WRITE:
+			logger.debug(this.toString() + " STATE_WRITE");
+			break;
+		case STATE_CLOSE:
+			logger.debug(this.toString() + " STATE_CLOSE");
+			break;
 		}
 	}
 
@@ -125,20 +123,12 @@ public abstract class Session {
 		this.id = id;
 	}
 
-	public int getState() {
-		return currentState;
+	public int getCurrentEvent() {
+		return currentEvent;
 	}
 
-	public void setState(int state) {
-		this.currentState = state;
-	}
-
-	public int getEvent() {
-		return event;
-	}
-
-	public void setEvent(int event) {
-		this.event = event;
+	public void setCurrentEvent(int event) {
+		this.currentEvent = event;
 	}
 
 	public IOBuffer getReadBuffer() {

@@ -14,12 +14,12 @@ public class EchoSession extends Session {
 	@Override
 	public void complateRead(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
-		complateReadOnce(readBuf, writeBuf);
+		reading(readBuf, writeBuf);
 	}
 
 	@Override
-	public void complateReadOnce(IOBuffer readBuf, IOBuffer writeBuf)
-			throws Exception {
+	public void reading(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
+		logger.debug(this.toString() + " reading...");
 		if (readBuf.position() > 1) {
 			byte b = readBuf.getByte(readBuf.position() - 1);
 			if (b == (byte) '\n') {
@@ -51,17 +51,18 @@ public class EchoSession extends Session {
 	}
 
 	@Override
-	public void timeout(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
-		setNextState(STATE_CLOSE);
-	}
-
-	@Override
 	public void close() {
 
 	}
 
 	public String toString() {
 		return "sessson:{id=" + this.getId() + "}";
+	}
+
+	@Override
+	public void writing(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
+		logger.debug(this.toString() + " writing...");
+
 	}
 
 }

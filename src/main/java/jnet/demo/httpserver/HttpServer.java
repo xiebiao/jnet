@@ -24,10 +24,10 @@ public class HttpServer extends Server<HttpSession> {
 		Settings config = new Settings();
 		config.threads = threads;
 		config.port = port;
-		config.readTimeout = 1000;
-		config.writeTimeout = 1000;
+		config.readTimeout = 2000;
+		config.writeTimeout = 2000;
 		config.ip = "localhost";
-		config.keepalive = true;
+	//	config.keepalive = true;
 		config.maxConnection = 100;
 		HttpServer server = new HttpServer(config, HttpSession.class);
 		// server.setSessionHandler(HttpSession.class);
