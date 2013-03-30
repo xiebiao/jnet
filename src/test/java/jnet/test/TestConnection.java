@@ -5,7 +5,7 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-import jnet.core.client.Connection;
+import jnet.core.client.Client;
 
 public class TestConnection  {
 	private static String host = "www.baidu.com";
@@ -14,7 +14,7 @@ public class TestConnection  {
 	public void atestConnect() throws Exception {
 		List<InetSocketAddress> servers = new ArrayList<InetSocketAddress>();
 		servers.add(new InetSocketAddress(InetAddress.getByName(host), 80));
-		Connection conn = new Connection(servers, 1000, 1000, 0);
+		Client conn = new Client(servers, 1000, 1000, 0);
 		conn.connect();
 		String header = "GET / HTTP/1.1\r\nHost: " + host + "\r\n\r\n";
 		byte[] stream = header.getBytes(encoding);

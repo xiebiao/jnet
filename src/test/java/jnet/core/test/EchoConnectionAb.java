@@ -4,7 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-import jnet.core.client.Connection;
+import jnet.core.client.Client;
 
 public class EchoConnectionAb {
 	private static String host = "localhost";
@@ -19,7 +19,7 @@ public class EchoConnectionAb {
 		servers.add(new InetSocketAddress(host, 8080));
 		
 		for (int i = 0; i < count; i++) {
-			Connection conn = new Connection(servers, 1000, 1000, 0);
+			Client conn = new Client(servers, 1000, 1000, 0);
 			new Thread(new Ab(conn, message)).start();
 		}
 

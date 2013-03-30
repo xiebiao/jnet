@@ -15,40 +15,31 @@ import jnet.core.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-/**
- * 
- * @author xiebiao[谢彪]
- * @email xiebiao@jd.com
- */
-public class Connection {
+public class Client {
 	private static final Logger logger = LoggerFactory
-			.getLogger(Connection.class);
+			.getLogger(Client.class);
 	/**
 	 * 连接超时（ms）
 	 */
-	public int cTimeout = 0;
+	public int connectionTimeout = 0;
 	/**
 	 * 读超时（ms）
 	 */
-	public int rTimeout = 0;
+	public int readTimeout = 0;
 	/**
 	 * 写超时（ms）
 	 */
-	public int wTimeout = 0;
+	public int writeTimeout = 0;
 
-	/**
-	 * IP
-	 */
 	public List<InetSocketAddress> servers;
 	Selector selector;
 	SocketChannel socket;
 
-	public Connection(List<InetSocketAddress> servers, int cTimeout,
+	public Client(List<InetSocketAddress> servers, int cTimeout,
 			int rTimeout, int wTimeout) {
-		this.cTimeout = cTimeout;
-		this.rTimeout = rTimeout;
-		this.wTimeout = wTimeout;
+		this.connectionTimeout = cTimeout;
+		this.readTimeout = rTimeout;
+		this.writeTimeout = wTimeout;
 		this.servers = servers;
 	}
 
@@ -91,7 +82,7 @@ public class Connection {
 			socket.configureBlocking(false);
 			socket.connect(server);
 			socket.register(selector, SelectionKey.OP_CONNECT);
-			selector.select(cTimeout);
+			selector.select(connectionTimeout);
 			Iterator<SelectionKey> it = selector.selectedKeys().iterator();
 			if (it.hasNext()) {
 				SelectionKey key = it.next();
@@ -155,7 +146,7 @@ public class Connection {
 			selector = Selector.open();
 			socket.register(selector, SelectionKey.OP_WRITE);
 
-			int remainTime = wTimeout;
+			int remainTime = writeTimeout;
 			while (remainTime >= 0) {
 				long stime = System.currentTimeMillis();
 				int ret = selector.select(remainTime);
@@ -224,7 +215,7 @@ public class Connection {
 			selector = Selector.open();
 			socket.register(selector, SelectionKey.OP_READ);
 
-			int remainTime = rTimeout;
+			int remainTime = readTimeout;
 			while (remainTime >= 0) {
 				long stime = System.currentTimeMillis();
 				int ret = selector.select(remainTime);

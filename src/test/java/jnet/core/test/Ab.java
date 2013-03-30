@@ -2,17 +2,17 @@ package jnet.core.test;
 
 import java.io.UnsupportedEncodingException;
 
-import jnet.core.client.Connection;
+import jnet.core.client.Client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Ab implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(Ab.class);
-	private Connection con;
+	private Client con;
 	private String message;
 
-	Ab(Connection con, String message) {
+	Ab(Client con, String message) {
 		this.con = con;
 		this.message = message;
 	}
