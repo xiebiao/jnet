@@ -1,14 +1,14 @@
 package jnet.demo.httpserver;
 
 import jnet.core.server.Server;
-import jnet.core.server.Settings;
+import jnet.core.server.Configuration;
 import jnet.protocol.http11.HttpSession;
 import jnet.protocol.http11.ServletFactory;
 import jnet.protocol.http11.ServletFilter;
 
 public class HttpServer extends Server<HttpSession> {
 
-	public HttpServer(Settings config, Class<HttpSession> clazz) {
+	public HttpServer(Configuration config, Class<HttpSession> clazz) {
 		super(config, clazz);
 	}
 
@@ -21,7 +21,7 @@ public class HttpServer extends Server<HttpSession> {
 			threads = Integer.parseInt(args[1]);
 			port = Short.parseShort(args[0]);
 		}
-		Settings config = new Settings();
+		Configuration config = new Configuration();
 		config.threads = threads;
 		config.port = port;
 		config.readTimeout = 2000;

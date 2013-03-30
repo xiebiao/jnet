@@ -14,14 +14,14 @@ public abstract class Session {
 	 */
 	private int id = 0;
 	/**
-	 * 当前的session 等待的IO状态 3种状态：读状态,写状态,关闭
+	 * IO状态
 	 */
 	public static final int STATE_READ = 0;
 	public static final int STATE_WRITE = 1;
 	public static final int STATE_CLOSE = 2;
 
 	/**
-	 * 当前session的事件 3种事件：可读，可写，超时
+	 * 会话事件：可读，可写，超时
 	 */
 	public static final int EVENT_READ = 0;
 	public static final int EVENT_WRITE = 1;
@@ -33,9 +33,7 @@ public abstract class Session {
 	private long nextTimeout = 0;
 
 	private int currentState;
-	/**
-	 * 当前的事件
-	 */
+
 	private int currentEvent = Session.EVENT_READ;
 
 	private IOBuffer readBuffer = null;
@@ -43,10 +41,9 @@ public abstract class Session {
 	private IOBuffer writeBuffer = null;
 
 	private SocketChannel socket = null;
-	/**
-	 * 全局配置
-	 */
-	private Settings config = null;
+
+	private Configuration config = null;
+
 	private boolean inuse = false;
 
 	public Session() {
@@ -61,15 +58,6 @@ public abstract class Session {
 	public abstract void reading(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception;
 
-	/**
-	 * 所有数据写入完成
-	 * 
-	 * @param readBuf
-	 *            请求包
-	 * @param writeBuf
-	 *            响应包
-	 * @throws Exception
-	 */
 	public abstract void complateWrite(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception;
 
@@ -155,11 +143,11 @@ public abstract class Session {
 		this.inuse = inuse;
 	}
 
-	public Settings getConfig() {
+	public Configuration getConfig() {
 		return config;
 	}
 
-	public void setConfig(Settings config) {
+	public void setConfig(Configuration config) {
 		this.config = config;
 	}
 

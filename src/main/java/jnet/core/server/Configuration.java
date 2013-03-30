@@ -1,6 +1,6 @@
 package jnet.core.server;
 
-public class Settings {
+public class Configuration {
 	/**
 	 * 工作线程数
 	 */

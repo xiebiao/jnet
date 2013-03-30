@@ -1,10 +1,10 @@
 package jnet.demo.echoserver;
 
 import jnet.core.server.Server;
-import jnet.core.server.Settings;
+import jnet.core.server.Configuration;
 
 public class EchoServer extends Server<EchoSession> {
-	public EchoServer(Settings config, Class<EchoSession> clazz) {
+	public EchoServer(Configuration config, Class<EchoSession> clazz) {
 		super(config, clazz);
 		// TODO Auto-generated constructor stub
 	}
@@ -12,7 +12,7 @@ public class EchoServer extends Server<EchoSession> {
 	public static void main(String[] args) throws Exception {
 		try {
 
-			Settings config = new Settings();
+			Configuration config = new Configuration();
 			config.threads = 5;
 			config.port = 8080;
 			config.readTimeout = 3000;
