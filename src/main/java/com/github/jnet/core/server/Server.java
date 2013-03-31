@@ -10,7 +10,6 @@ import java.nio.channels.SocketChannel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +44,6 @@ public abstract class Server<T extends Session> {
 	 * @throws Exception
 	 */
 	public void start() throws Exception {
-		logger.debug("Server start");
 		for (int i = 0; i < config.maxConnection; i++) {
 			Session session = this.sessionHandler.newInstance();
 			session.setId(i);
@@ -55,8 +53,9 @@ public abstract class Server<T extends Session> {
 			session.setReadBuffer(new IOBuffer());
 			session.setWriteBuffer(new IOBuffer());
 			SessionManager.addSession(session);
+		
 		}
-
+		logger.debug("Create  " +config.maxConnection + " session in the pool.");
 		try {
 			init();
 		} catch (Exception e) {

@@ -1,6 +1,5 @@
 package com.github.jnet.protocol.http11;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +63,6 @@ public class HttpSession extends Session {
 
 	void parseBody(String body) {
 		logger.debug(this.toString() + "Parse HTTP Body");
-		// 解析参数
 		String paramStr = body;
 		String url = request.header.get(HttpAttr.HEAD_URL);
 		int paramPos = url.indexOf("?");
@@ -81,8 +79,7 @@ public class HttpSession extends Session {
 			}
 			request.params.put(row[0].trim(), row[1].trim());
 		}
-
-		// 解析cookie
+		
 		if (request.header.containsKey(HttpAttr.HEAD_COOKIE)) {
 			String cookieStr = request.header.get(HttpAttr.HEAD_COOKIE);
 			String[] cookies = cookieStr.split(";");
@@ -103,17 +100,15 @@ public class HttpSession extends Session {
 	}
 
 	@Override
-	public void reading(IOBuffer readBuf, IOBuffer writeBuf)
-			throws Exception {
-		logger.debug(this.toString() + " reading...");
+	public void reading(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
+
+		logger.debug("Poccess the Session[" + this.getId() + "].");
 		if (state == STATE_READ_HEAD) {
 			String buf = readBuf.getString("ASCII");
 			int endPos = buf.indexOf("\r\n\r\n");
 			if (endPos == -1) {
-				// header不完整，继续接收
 				remainToRead(BUF_SIZE);
 			}
-			// 解析header
 			state = STATE_READ_BODY;
 			String header = buf.substring(0, endPos);
 			parseHeader(header);
@@ -121,16 +116,12 @@ public class HttpSession extends Session {
 		}
 		if (state == STATE_READ_BODY) {
 			if (bodyStartPos + bodyLen > readBuf.position()) {
-				// body不完整，继续接收
 				remainToRead(bodyStartPos + bodyLen - readBuf.position());
 				return;
 			}
-			// 解析body
 			state = STATE_READ_HEAD;
 			String body = readBuf.getString(bodyStartPos, bodyLen, "ASCII");
 			parseBody(body);
-
-			// 执行servlet
 			handle(readBuf, writeBuf);
 			setNextState(STATE_WRITE);
 			return;
@@ -140,7 +131,6 @@ public class HttpSession extends Session {
 	}
 
 	public void handle(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
-		// 执行servlet
 		Servlet action = ServletFactory.get(request);
 		if (action == null) {
 			throw new Exception("action not found");
@@ -152,7 +142,7 @@ public class HttpSession extends Session {
 		writeBuf.position(0);
 		request.reset();
 		response.reset();
-		logger.debug("Finished a request");
+		logger.debug("Write buffer to Session[" + this.getId() + "].");
 	}
 
 	@Override
@@ -173,6 +163,6 @@ public class HttpSession extends Session {
 	@Override
 	public void writing(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
 		logger.debug(this.toString() + " writing...");
-		
+
 	}
 }

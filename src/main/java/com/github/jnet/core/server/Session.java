@@ -2,7 +2,6 @@ package com.github.jnet.core.server;
 
 import java.nio.channels.SocketChannel;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +68,8 @@ public abstract class Session {
 	}
 
 	public void timeout() throws Exception {
+		logger.debug("The Session " + this.getId()
+				+ " is timeout, will be closed.");
 		setNextState(STATE_CLOSE);
 	}
 
@@ -83,13 +84,13 @@ public abstract class Session {
 		}
 		switch (state) {
 		case STATE_READ:
-			logger.debug(this.toString() + " STATE_READ");
+			logger.debug("Set the Session[" + this.getId() + "]'s state to" + " STATE_READ");
 			break;
 		case STATE_WRITE:
-			logger.debug(this.toString() + " STATE_WRITE");
+			logger.debug("Set the Session[" + this.getId() + "]'s state to" + " STATE_WRITE");
 			break;
 		case STATE_CLOSE:
-			logger.debug(this.toString() + " STATE_CLOSE");
+			logger.debug("Set the Session[" + this.getId() + "]'s state to" + " STATE_CLOSE");
 			break;
 		}
 	}

@@ -36,7 +36,8 @@ public final class SessionManager {
 				Session session = sessionIter.next();
 				if (!session.isInuse()) {
 					session.setInuse(true);
-					logger.debug("Get "+session.toString());
+					logger.debug("Get Session[" + session.getId()
+							+ "] from pool.");
 					return session;
 				}
 			}
@@ -44,20 +45,15 @@ public final class SessionManager {
 		return null;
 	}
 
-	/**
-	 * 关闭一个session，并放入session池中供后续复用
-	 * 
-	 * @param session
-	 */
 	public static void closeSession(Session session) {
-		logger.debug(session + "closed,put it back to pool");
+		logger.debug("Session[" + session.getId()
+				+ "] is closed,put it back to pool.");
 		synchronized (lock) {
 			session.setInuse(false);
 		}
 	}
 
 	public static void addSession(Session session) {
-		logger.debug("Add " + session + " to pool");
 		sessionList.add(session);
 	}
 }

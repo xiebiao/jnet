@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +47,7 @@ public class Worker implements Runnable {
 	 * @param session
 	 */
 	public void addTimeoutSession(Session session) {
-		logger.debug("Add time out " + session);
+		logger.debug("Session[" + session.getId() + "] is time out.");
 		if (session.getNextTimeout() > 0) {
 			timeoutSessionSet.add(session);
 		}
@@ -131,22 +130,32 @@ public class Worker implements Runnable {
 		if (session.getCurrentState() == Session.STATE_READ
 				&& session.getReadBuffer().remaining() > 0) {
 			if (session.getConfig().readTimeout > 0) {
-				session.setNextTimeout(System.currentTimeMillis()
-						+ session.getConfig().readTimeout);
+				/** 根据配置设置读取超时 */
+				if (session.getNextTimeout() > System.currentTimeMillis()) {
+					/** 读取已超时 */
+					session.setNextTimeout(System.currentTimeMillis()
+							+ session.getConfig().readTimeout);
+					addTimeoutSession(session);
+				}
 			}
 			session.getSocket().register(selector, SelectionKey.OP_READ,
 					session);
-			addTimeoutSession(session);
+
 		} else if (session.getCurrentState() == Session.STATE_WRITE
 				&& session.getWriteBuffer().remaining() > 0) {
 			if (session.getConfig().writeTimeout > 0) {
-				session.setNextTimeout(System.currentTimeMillis()
-						+ session.getConfig().writeTimeout);
+				/** 根据配置设置写超时 */
+				if (session.getNextTimeout() > System.currentTimeMillis()) {
+					/** 读取已超时 */
+					session.setNextTimeout(System.currentTimeMillis()
+							+ session.getConfig().readTimeout);
+					addTimeoutSession(session);
+				}
 			}
 			session.getSocket().register(selector, SelectionKey.OP_WRITE,
 					session);
-			addTimeoutSession(session);
 		} else {
+			/** 关闭 session */
 			close(session);
 		}
 	}
@@ -163,10 +172,11 @@ public class Worker implements Runnable {
 			SelectionKey key = keyIter.next();
 			keyIter.remove();
 			Session session = (Session) key.attachment();
-//			session.setCurrentEvent(session.getCurrentState() == Session.EVENT_READ ? Session.EVENT_READ
-//					: Session.EVENT_WRITE);
+			// session.setCurrentEvent(session.getCurrentState() ==
+			// Session.EVENT_READ ? Session.EVENT_READ
+			// : Session.EVENT_WRITE);
 			eventSessionList.add(session);
-			//timeoutSessionSet.remove(session);
+			// timeoutSessionSet.remove(session);
 		}
 
 		Iterator<Session> sessionIter = timeoutSessionSet.iterator();
@@ -187,7 +197,6 @@ public class Worker implements Runnable {
 	 * 处理当前有事件session 3种事件：可读、可写、超时
 	 */
 	private void handleEventSession() {
-		// 处理事件
 		Iterator<Session> eventIter = eventSessionList.iterator();
 		while (eventIter.hasNext()) {
 			Session session = eventIter.next();
@@ -226,15 +235,18 @@ public class Worker implements Runnable {
 			int len = 0;
 			int curState = session.getCurrentState();
 			if (curState == Session.STATE_READ) {
-				len = IOUtils.read(session.getSocket(), buf);
+				len = IOUtils.read(session,session.getSocket(), buf);
 			} else {
-				len = IOUtils.write(session.getSocket(), buf);
+				len = IOUtils.write(session, session.getSocket(), buf);
 			}
 			int remain = buf.remaining();
+			
 			if (curState == Session.STATE_READ) {
 				if (remain == 0) {
 					session.complateRead(session.getReadBuffer(),
 							session.getWriteBuffer());
+					logger.debug("Session[" + session.getId()
+							+ "] is readComplated.");
 				} else {
 					session.reading(session.getReadBuffer(),
 							session.getWriteBuffer());
@@ -243,13 +255,15 @@ public class Worker implements Runnable {
 				if (remain == 0) {
 					session.complateWrite(session.getReadBuffer(),
 							session.getWriteBuffer());
+					logger.debug("Session[" + session.getId()
+							+ "] is writeComplated.");
 				} else {
 					session.writing(session.getReadBuffer(),
 							session.getWriteBuffer());
 				}
 			}
 			if (len == 0 || session.getCurrentState() != curState) {
-				// session状态切换
+				/** 更新session状态 */
 				updateSession(session);
 				break;
 			}
@@ -263,7 +277,6 @@ public class Worker implements Runnable {
 	 * @throws Exception
 	 */
 	public void readEvent(Session session) throws Exception {
-		logger.debug(session + " read");
 		ioEvent(session, session.getReadBuffer());
 	}
 
@@ -274,7 +287,6 @@ public class Worker implements Runnable {
 	 * @throws ClosedChannelException
 	 */
 	public void writeEvent(Session session) throws Exception {
-		logger.debug(session + ", write");
 		ioEvent(session, session.getWriteBuffer());
 	}
 

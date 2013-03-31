@@ -9,21 +9,10 @@ import java.nio.ReadOnlyBufferException;
 public class IOBuffer {
 	protected ByteBuffer buf;
 
-	/**
-	 * 获取原始ByteBuffer
-	 * 
-	 * @return
-	 */
 	public ByteBuffer getBuffer() {
 		return buf;
 	}
 
-	/**
-	 * 构造函数
-	 * 
-	 * @param initSize
-	 *            初始化buffer大小
-	 */
 	public IOBuffer(int initSize) {
 		buf = ByteBuffer.allocate(initSize);
 	}
