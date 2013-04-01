@@ -16,6 +16,7 @@ public class Request {
 	}
 
 	public String toString() {
-		return header.toString() + "\n" + params.toString();
+		return "\n" + header.toString() + "\n" + cookie.toString() + "\n"
+				+ params.toString();
 	}
 }

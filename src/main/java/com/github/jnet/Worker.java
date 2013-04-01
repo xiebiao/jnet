@@ -311,7 +311,6 @@ public class Worker implements Runnable {
 		}
 		timeoutSessionSet.remove(session);
 		SessionManager.closeSession(session);
-		// 执行close回调函数
 		session.close();
 	}
 

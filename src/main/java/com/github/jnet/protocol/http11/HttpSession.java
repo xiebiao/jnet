@@ -10,18 +10,25 @@ public class HttpSession extends Session {
 	private static final Logger logger = LoggerFactory
 			.getLogger(HttpSession.class);
 
-	static final int BUF_SIZE = 2048;
-	static final int STATE_READ_HEAD = 0;
-	static final int STATE_READ_BODY = 1;
+	private static final int BUF_SIZE = 2048;// (2M)
+	private static final int STATE_READ_HEAD = 0;
+	private static final int STATE_READ_BODY = 1;
 
-	Request request = new Request();
-	Response response = new Response();
-	int state = STATE_READ_HEAD;
-	int bodyLen = 0;
-	int bodyStartPos = 0;
+	private Request request = new Request();
+	private Response response = new Response();
+	private int currentState = STATE_READ_HEAD;
+	private int bodyLen = 0;
+	private int bodyStartPos = 0;
 
-	void parseHeader(String header) throws Exception {
+	public HttpSession() {
+		request = new Request();
+		response = new Response();
+		currentState = STATE_READ_HEAD;
+		bodyLen = 0;
+		bodyStartPos = 0;
+	}
 
+	private void parseHeader(String header) throws Exception {
 		logger.debug(this.toString() + "Parse HTTP Header");
 		String[] lines = header.split("\r\n");
 		if (lines.length == 0) {
@@ -79,7 +86,7 @@ public class HttpSession extends Session {
 			}
 			request.params.put(row[0].trim(), row[1].trim());
 		}
-		
+
 		if (request.header.containsKey(HttpAttr.HEAD_COOKIE)) {
 			String cookieStr = request.header.get(HttpAttr.HEAD_COOKIE);
 			String[] cookies = cookieStr.split(";");
@@ -103,23 +110,23 @@ public class HttpSession extends Session {
 	public void reading(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
 
 		logger.debug("Poccess the Session[" + this.getId() + "].");
-		if (state == STATE_READ_HEAD) {
+		if (currentState == STATE_READ_HEAD) {
 			String buf = readBuf.getString("ASCII");
 			int endPos = buf.indexOf("\r\n\r\n");
 			if (endPos == -1) {
 				remainToRead(BUF_SIZE);
 			}
-			state = STATE_READ_BODY;
+			currentState = STATE_READ_BODY;
 			String header = buf.substring(0, endPos);
 			parseHeader(header);
 			bodyStartPos = endPos + 4;
 		}
-		if (state == STATE_READ_BODY) {
+		if (currentState == STATE_READ_BODY) {
 			if (bodyStartPos + bodyLen > readBuf.position()) {
 				remainToRead(bodyStartPos + bodyLen - readBuf.position());
 				return;
 			}
-			state = STATE_READ_HEAD;
+			currentState = STATE_READ_HEAD;
 			String body = readBuf.getString(bodyStartPos, bodyLen, "ASCII");
 			parseBody(body);
 			handle(readBuf, writeBuf);
@@ -127,7 +134,6 @@ public class HttpSession extends Session {
 			return;
 		}
 		remainToRead(BUF_SIZE);
-
 	}
 
 	public void handle(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
@@ -164,5 +170,14 @@ public class HttpSession extends Session {
 	public void writing(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
 		logger.debug(this.toString() + " writing...");
 
+	}
+
+	@Override
+	public void close() {
+		this.request.reset();
+		this.response.reset();
+		this.currentState = STATE_READ_HEAD;
+		this.bodyLen = 0;
+		this.bodyStartPos = 0;
 	}
 }

@@ -2,15 +2,15 @@ package com.github.jnet.protocol.http11;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
 
 public class Response {
 
-	Map<String, String> header = new HashMap<String, String>();
-	Map<String, String> cookie = new HashMap<String, String>();
-	StringBuilder res = new StringBuilder();
-	String charset = "UTF-8";
+	private Map<String, String> header = new HashMap<String, String>();
+	private Map<String, String> cookie = new HashMap<String, String>();
+	private StringBuilder res = new StringBuilder();
+	private String charset = "UTF-8";
 
 	public void write(String str) {
 		res.append(str);
@@ -22,10 +22,10 @@ public class Response {
 		res = new StringBuilder();
 	}
 
-	public byte[] toBytes() throws UnsupportedEncodingException {
-		// body len
+	public byte[] toBytes() throws UnsupportedEncodingException {	
 		byte[] body = res.toString().getBytes(charset);
-		header.put(HttpAttr.HEAD_CONTENT_LEN, ((Integer) body.length).toString());
+		header.put(HttpAttr.HEAD_CONTENT_LEN,
+				((Integer) body.length).toString());
 
 		if (!header.containsKey(HttpAttr.HEAD_CONTENT_TYPE)) {
 			header.put(HttpAttr.HEAD_CONTENT_TYPE, "text/html");
@@ -47,5 +47,10 @@ public class Response {
 		System.arraycopy(body, 0, pacaket, head.length, body.length);
 
 		return pacaket;
+	}
+
+	public String toString() {
+		return "\n" + header.toString() + "\n" + cookie.toString() + "\n"
+				+ res.toString();
 	}
 }

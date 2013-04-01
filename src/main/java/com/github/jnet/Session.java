@@ -64,8 +64,7 @@ public abstract class Session {
 	public abstract void writing(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception;
 
-	public void close() {
-	}
+	public abstract void close();
 
 	public void timeout() throws Exception {
 		logger.debug("The Session " + this.getId()
@@ -84,13 +83,16 @@ public abstract class Session {
 		}
 		switch (state) {
 		case STATE_READ:
-			logger.debug("Set the Session[" + this.getId() + "]'s state to" + " STATE_READ");
+			logger.debug("Set the Session[" + this.getId() + "]'s state to"
+					+ " STATE_READ");
 			break;
 		case STATE_WRITE:
-			logger.debug("Set the Session[" + this.getId() + "]'s state to" + " STATE_WRITE");
+			logger.debug("Set the Session[" + this.getId() + "]'s state to"
+					+ " STATE_WRITE");
 			break;
 		case STATE_CLOSE:
-			logger.debug("Set the Session[" + this.getId() + "]'s state to" + " STATE_CLOSE");
+			logger.debug("Set the Session[" + this.getId() + "]'s state to"
+					+ " STATE_CLOSE");
 			break;
 		}
 	}
