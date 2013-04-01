@@ -3,7 +3,7 @@ package com.github.jnet.protocol.http11;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnet.core.server.Session;
+import com.github.jnet.Session;
 import com.github.jnet.utils.IOBuffer;
 
 public class HttpSession extends Session {

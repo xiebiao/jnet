@@ -1,4 +1,4 @@
-package com.github.jnet.core.server;
+package com.github.jnet;
 
 public class Configuration {
 	/**

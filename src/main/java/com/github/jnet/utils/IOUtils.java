@@ -5,7 +5,7 @@ import java.nio.channels.SocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnet.core.server.Session;
+import com.github.jnet.Session;
 
 public final class IOUtils {
 	private static Logger logger = LoggerFactory.getLogger(IOUtils.class);

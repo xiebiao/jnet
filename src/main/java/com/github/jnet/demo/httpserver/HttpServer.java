@@ -1,7 +1,7 @@
 package com.github.jnet.demo.httpserver;
 
-import com.github.jnet.core.server.Configuration;
-import com.github.jnet.core.server.Server;
+import com.github.jnet.Configuration;
+import com.github.jnet.Server;
 import com.github.jnet.protocol.http11.HttpSession;
 import com.github.jnet.protocol.http11.ServletFactory;
 import com.github.jnet.protocol.http11.ServletFilter;

@@ -1,4 +1,4 @@
-package com.github.jnet.core.server;
+package com.github.jnet;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -55,7 +55,7 @@ public abstract class Server<T extends Session> {
 			SessionManager.addSession(session);
 		
 		}
-		logger.debug("Create  " +config.maxConnection + " session in the pool.");
+		logger.debug("Create " +config.maxConnection + " session in the pool.");
 		try {
 			init();
 		} catch (Exception e) {
@@ -77,7 +77,7 @@ public abstract class Server<T extends Session> {
 				csocket.configureBlocking(false);
 				Session session = SessionManager.getSession();
 				if (session == null) {
-					logger.error("Too many connection");
+					logger.error("Too many connection.");
 					csocket.close();
 					continue;
 				} else {

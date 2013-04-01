@@ -1,4 +1,4 @@
-package com.github.jnet.core.client;
+package com.github.jnet;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

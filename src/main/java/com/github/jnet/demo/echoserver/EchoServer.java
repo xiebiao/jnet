@@ -1,7 +1,7 @@
 package com.github.jnet.demo.echoserver;
 
-import com.github.jnet.core.server.Configuration;
-import com.github.jnet.core.server.Server;
+import com.github.jnet.Configuration;
+import com.github.jnet.Server;
 
 public class EchoServer extends Server<EchoSession> {
 	public EchoServer(Configuration config, Class<EchoSession> clazz) {

@@ -4,7 +4,7 @@ package com.github.jnet.demo.echoserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnet.core.server.Session;
+import com.github.jnet.Session;
 import com.github.jnet.utils.IOBuffer;
 
 public class EchoSession extends Session {

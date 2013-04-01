@@ -1,4 +1,4 @@
-package com.github.jnet.core.server;
+package com.github.jnet;
 
 import java.io.IOException;
 import java.nio.channels.ClosedChannelException;
