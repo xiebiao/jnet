@@ -13,12 +13,6 @@ public abstract class Session {
 	 * session id
 	 */
 	private int id = 0;
-	/**
-	 * IO状态
-	 */
-//	public static final int STATE_READ = 0;
-//	public static final int STATE_WRITE = 1;
-//	public static final int STATE_CLOSE = 2;
 
 	/**
 	 * 下一次超时时间点（时间戳）
