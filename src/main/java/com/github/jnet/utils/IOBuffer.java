@@ -6,6 +6,13 @@ import java.nio.ByteOrder;
 import java.nio.InvalidMarkException;
 import java.nio.ReadOnlyBufferException;
 
+/**
+ * IOBuffer.
+ * 
+ * @see http://tutorials.jenkov.com/java-nio/buffers.html
+ * @author xiebiao
+ * 
+ */
 public class IOBuffer {
 	protected ByteBuffer buf;
 
