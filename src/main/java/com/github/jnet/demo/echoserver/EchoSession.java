@@ -4,6 +4,7 @@ package com.github.jnet.demo.echoserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.jnet.IOState;
 import com.github.jnet.Session;
 import com.github.jnet.utils.IOBuffer;
 
@@ -30,7 +31,7 @@ public class EchoSession extends Session {
 
 				writeBuf.position(0);
 				writeBuf.limit(len);
-				setNextState(STATE_WRITE);
+				setNextState(IOState.WRITE);
 				return;
 			}
 		}

@@ -48,14 +48,14 @@ public abstract class Server<T extends Session> {
 			Session session = this.sessionHandler.newInstance();
 			session.setId(i);
 			session.setConfig(config);
-			session.setCurrentEvent(Session.EVENT_READ);
+			session.setCurrentEvent(SessionEvent.READ);
 			session.setInuse(false);
 			session.setReadBuffer(new IOBuffer());
 			session.setWriteBuffer(new IOBuffer());
 			SessionManager.addSession(session);
-		
+
 		}
-		logger.debug("Create " +config.maxConnection + " session in the pool.");
+		logger.debug("Create " + config.maxConnection + " session in the pool.");
 		try {
 			init();
 		} catch (Exception e) {

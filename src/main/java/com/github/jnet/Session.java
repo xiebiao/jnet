@@ -16,25 +16,22 @@ public abstract class Session {
 	/**
 	 * IO状态
 	 */
-	public static final int STATE_READ = 0;
-	public static final int STATE_WRITE = 1;
-	public static final int STATE_CLOSE = 2;
-
-	/**
-	 * 会话事件：可读，可写，超时
-	 */
-	public static final int EVENT_READ = 0;
-	public static final int EVENT_WRITE = 1;
-	public static final int EVENT_TIMEOUT = 2;
+//	public static final int STATE_READ = 0;
+//	public static final int STATE_WRITE = 1;
+//	public static final int STATE_CLOSE = 2;
 
 	/**
 	 * 下一次超时时间点（时间戳）
 	 */
 	private long nextTimeout = 0;
-
-	private int currentState;
-
-	private int currentEvent = Session.EVENT_READ;
+	/**
+	 * 当前IO状态
+	 */
+	private IOState currentState;
+	/**
+	 * 当前会话事件
+	 */
+	private SessionEvent currentEvent = SessionEvent.READ;
 
 	private IOBuffer readBuffer = null;
 
@@ -69,28 +66,28 @@ public abstract class Session {
 	public void timeout() throws Exception {
 		logger.debug("The Session " + this.getId()
 				+ " is timeout, will be closed.");
-		setNextState(STATE_CLOSE);
+		setNextState(IOState.CLOSE);
 	}
 
-	public void setNextState(int state) {
+	public void setNextState(IOState state) {
 		this.currentState = state;
-		if (state == STATE_WRITE) {
+		if (state == IOState.WRITE) {
 			readBuffer.position(0);
 			readBuffer.limit(0);
-		} else if (state == STATE_READ) {
+		} else if (state == IOState.READ) {
 			writeBuffer.position(0);
 			writeBuffer.limit(0);
 		}
 		switch (state) {
-		case STATE_READ:
+		case READ:
 			logger.debug("Set the Session[" + this.getId() + "]'s state to"
 					+ " STATE_READ");
 			break;
-		case STATE_WRITE:
+		case WRITE:
 			logger.debug("Set the Session[" + this.getId() + "]'s state to"
 					+ " STATE_WRITE");
 			break;
-		case STATE_CLOSE:
+		case CLOSE:
 			logger.debug("Set the Session[" + this.getId() + "]'s state to"
 					+ " STATE_CLOSE");
 			break;
@@ -99,12 +96,12 @@ public abstract class Session {
 
 	public void remainToRead(int remain) {
 		readBuffer.limit(readBuffer.position() + remain);
-		setNextState(STATE_READ);
+		setNextState(IOState.READ);
 	}
 
 	public void remainToWrite(int remain) {
 		writeBuffer.limit(writeBuffer.position() + remain);
-		setNextState(STATE_WRITE);
+		setNextState(IOState.WRITE);
 	}
 
 	public int getId() {
@@ -115,11 +112,11 @@ public abstract class Session {
 		this.id = id;
 	}
 
-	public int getCurrentEvent() {
+	public SessionEvent getCurrentEvent() {
 		return currentEvent;
 	}
 
-	public void setCurrentEvent(int event) {
+	public void setCurrentEvent(SessionEvent event) {
 		this.currentEvent = event;
 	}
 
@@ -171,11 +168,11 @@ public abstract class Session {
 		this.nextTimeout = nextTimeout;
 	}
 
-	public int getCurrentState() {
+	public IOState getCurrentState() {
 		return currentState;
 	}
 
-	public void setCurrentState(int currentState) {
+	public void setCurrentState(IOState currentState) {
 		this.currentState = currentState;
 	}
 

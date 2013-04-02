@@ -3,6 +3,7 @@ package com.github.jnet.protocol.http11;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.jnet.IOState;
 import com.github.jnet.Session;
 import com.github.jnet.utils.IOBuffer;
 
@@ -130,7 +131,7 @@ public class HttpSession extends Session {
 			String body = readBuf.getString(bodyStartPos, bodyLen, "ASCII");
 			parseBody(body);
 			handle(readBuf, writeBuf);
-			setNextState(STATE_WRITE);
+			setNextState(IOState.WRITE);
 			return;
 		}
 		remainToRead(BUF_SIZE);
@@ -154,7 +155,7 @@ public class HttpSession extends Session {
 	@Override
 	public void complateWrite(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
-		setNextState(STATE_CLOSE);
+		setNextState(IOState.CLOSE);
 	}
 
 	@Override

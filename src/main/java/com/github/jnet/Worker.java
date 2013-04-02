@@ -127,7 +127,7 @@ public class Worker implements Runnable {
 	}
 
 	private void updateSession(Session session) throws ClosedChannelException {
-		if (session.getCurrentState() == Session.STATE_READ
+		if (session.getCurrentState() == IOState.READ
 				&& session.getReadBuffer().remaining() > 0) {
 			if (session.getConfig().readTimeout > 0) {
 				/** 根据配置设置读取超时 */
@@ -141,7 +141,7 @@ public class Worker implements Runnable {
 			session.getSocket().register(selector, SelectionKey.OP_READ,
 					session);
 
-		} else if (session.getCurrentState() == Session.STATE_WRITE
+		} else if (session.getCurrentState() == IOState.WRITE
 				&& session.getWriteBuffer().remaining() > 0) {
 			if (session.getConfig().writeTimeout > 0) {
 				/** 根据配置设置写超时 */
@@ -183,7 +183,7 @@ public class Worker implements Runnable {
 		while (sessionIter.hasNext()) {
 			Session session = sessionIter.next();
 			if (session.getNextTimeout() <= time) {
-				session.setCurrentEvent(Session.EVENT_TIMEOUT);
+				session.setCurrentEvent(SessionEvent.TIMEOUT);
 				eventSessionList.add(session);
 				sessionIter.remove();
 			} else {
@@ -201,11 +201,11 @@ public class Worker implements Runnable {
 		while (eventIter.hasNext()) {
 			Session session = eventIter.next();
 			try {
-				if (session.getCurrentEvent() == Session.EVENT_TIMEOUT) {
+				if (session.getCurrentEvent() == SessionEvent.TIMEOUT) {
 					timeoutEvent(session);
-				} else if (session.getCurrentState() == Session.STATE_READ) {
+				} else if (session.getCurrentState() == IOState.READ) {
 					readEvent(session);
-				} else if (session.getCurrentState() == Session.STATE_WRITE) {
+				} else if (session.getCurrentState() == IOState.WRITE) {
 					writeEvent(session);
 				}
 			} catch (Exception e) {
@@ -233,15 +233,15 @@ public class Worker implements Runnable {
 	private void ioEvent(Session session, IOBuffer buf) throws Exception {
 		while (buf.remaining() > 0) {
 			int len = 0;
-			int curState = session.getCurrentState();
-			if (curState == Session.STATE_READ) {
-				len = IOUtils.read(session,session.getSocket(), buf);
+			IOState curState = session.getCurrentState();
+			if (curState == IOState.READ) {
+				len = IOUtils.read(session, session.getSocket(), buf);
 			} else {
 				len = IOUtils.write(session, session.getSocket(), buf);
 			}
 			int remain = buf.remaining();
-			
-			if (curState == Session.STATE_READ) {
+
+			if (curState == IOState.READ) {
 				if (remain == 0) {
 					session.complateRead(session.getReadBuffer(),
 							session.getWriteBuffer());
