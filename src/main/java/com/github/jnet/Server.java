@@ -35,7 +35,7 @@ public abstract class Server<T extends Session> {
 	public Server(Configuration config, Class<T> sessionHandler) {
 		this.config = config;
 		this.sessionHandler = sessionHandler;
-		workers = new Worker[config.threads];
+		workers = new Worker[config.getThreadNumber()];
 	}
 
 	/**
@@ -44,18 +44,15 @@ public abstract class Server<T extends Session> {
 	 * @throws Exception
 	 */
 	public void start() throws Exception {
-		for (int i = 0; i < config.maxConnection; i++) {
+		for (int i = 0; i < config.getMaxConnection(); i++) {
 			Session session = this.sessionHandler.newInstance();
 			session.setId(i);
-			session.setConfig(config);
 			session.setCurrentEvent(SessionEvent.READ);
 			session.setInuse(false);
 			session.setReadBuffer(new IOBuffer());
 			session.setWriteBuffer(new IOBuffer());
 			SessionManager.addSession(session);
-
 		}
-		logger.debug("Create " + config.maxConnection + " session in the pool.");
 		try {
 			init();
 		} catch (Exception e) {
@@ -63,12 +60,13 @@ public abstract class Server<T extends Session> {
 			return;
 		}
 
-		ExecutorService pool = Executors.newFixedThreadPool(config.threads);
+		ExecutorService pool = Executors.newFixedThreadPool(config
+				.getThreadNumber());
 		for (int i = 0; i < workers.length; i++) {
-			workers[i] = new Worker();
+			workers[i] = new Worker(this.config);
 			pool.execute(workers[i]);
 		}
-
+		logger.info("Server: " + this.config.toString());
 		SocketChannel csocket = null;
 		while (true) {
 			selector.select();
@@ -91,6 +89,7 @@ public abstract class Server<T extends Session> {
 				logger.warn("", e);
 			}
 		}
+
 	}
 
 	public void init() throws IOException {
@@ -100,10 +99,9 @@ public abstract class Server<T extends Session> {
 		socket.socket().setReuseAddress(true);
 		socket.configureBlocking(false);
 		socket.socket().bind(
-				new InetSocketAddress(InetAddress.getByName(config.ip),
-						config.port));
+				new InetSocketAddress(InetAddress.getByName(config.getIp()),
+						config.getPort()));
 		socket.register(selector, SelectionKey.OP_ACCEPT);
-		logger.debug("Server start on " + config.ip + ":" + config.port + "");
 	}
 
 	/**
@@ -113,7 +111,7 @@ public abstract class Server<T extends Session> {
 	 */
 	private void handleNewSession(Session session) {
 		workers[nextWorkerIndex].addNewSession(session);
-		nextWorkerIndex = (nextWorkerIndex + 1) % config.threads;
+		nextWorkerIndex = (nextWorkerIndex + 1) % config.getThreadNumber();
 	}
 
 }

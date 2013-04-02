@@ -10,7 +10,7 @@ import com.github.jnet.utils.IOBuffer;
 public abstract class Session {
 	private static final Logger logger = LoggerFactory.getLogger(Session.class);
 	/**
-	 * session id
+	 *会话id
 	 */
 	private int id = 0;
 
@@ -33,7 +33,7 @@ public abstract class Session {
 
 	private SocketChannel socket = null;
 
-	private Configuration config = null;
+	//private Configuration config = null;
 
 	private boolean inuse = false;
 
@@ -137,15 +137,7 @@ public abstract class Session {
 	public void setInuse(boolean inuse) {
 		this.inuse = inuse;
 	}
-
-	public Configuration getConfig() {
-		return config;
-	}
-
-	public void setConfig(Configuration config) {
-		this.config = config;
-	}
-
+	
 	public IOBuffer getWriteBuffer() {
 		return writeBuffer;
 	}

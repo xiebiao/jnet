@@ -22,6 +22,7 @@ import com.github.jnet.utils.IOUtils;
 public class Worker implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(Worker.class);
 	private Selector selector;
+	private Configuration config;
 	private Queue<Session> newSessionQueue = new ConcurrentLinkedQueue<Session>();
 	private List<Session> eventSessionList = new ArrayList<Session>();
 	private Set<Session> timeoutSessionSet = new TreeSet<Session>(
@@ -37,7 +38,8 @@ public class Worker implements Runnable {
 				}
 			});
 
-	public Worker() throws IOException {
+	public Worker(Configuration config) throws IOException {
+		this.config = config;
 		selector = Selector.open();
 	}
 
@@ -105,13 +107,13 @@ public class Worker implements Runnable {
 	}
 
 	/**
-	 * 初始化新增连接
+	 * 初始化新会话
 	 * 
 	 * @param session
 	 */
 	public void initNewSession(Session session) {
 		try {
-			// 初始化buffer
+			/** 初始化buffer */
 			session.getReadBuffer().position(0);
 			session.getReadBuffer().limit(0);
 			session.getWriteBuffer().position(0);
@@ -129,12 +131,12 @@ public class Worker implements Runnable {
 	private void updateSession(Session session) throws ClosedChannelException {
 		if (session.getCurrentState() == IOState.READ
 				&& session.getReadBuffer().remaining() > 0) {
-			if (session.getConfig().readTimeout > 0) {
+			if (this.config.getReadTimeout() > 0) {
 				/** 根据配置设置读取超时 */
 				if (session.getNextTimeout() > System.currentTimeMillis()) {
 					/** 读取已超时 */
 					session.setNextTimeout(System.currentTimeMillis()
-							+ session.getConfig().readTimeout);
+							+ this.config.getReadTimeout());
 					addTimeoutSession(session);
 				}
 			}
@@ -143,12 +145,12 @@ public class Worker implements Runnable {
 
 		} else if (session.getCurrentState() == IOState.WRITE
 				&& session.getWriteBuffer().remaining() > 0) {
-			if (session.getConfig().writeTimeout > 0) {
+			if (this.config.getWriteTimeout() > 0) {
 				/** 根据配置设置写超时 */
 				if (session.getNextTimeout() > System.currentTimeMillis()) {
 					/** 读取已超时 */
 					session.setNextTimeout(System.currentTimeMillis()
-							+ session.getConfig().readTimeout);
+							+ this.config.getReadTimeout());
 					addTimeoutSession(session);
 				}
 			}

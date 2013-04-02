@@ -11,15 +11,7 @@ public class EchoServer extends Server<EchoSession> {
 
 	public static void main(String[] args) throws Exception {
 		try {
-
 			Configuration config = new Configuration();
-			config.threads = 5;
-			config.port = 8080;
-			config.readTimeout = 3000;
-			config.writeTimeout = 3000;
-			config.ip = "localhost";
-			//config.keepalive = true;
-			config.maxConnection = 100;
 			EchoServer server = new EchoServer(config, EchoSession.class);
 			server.start();
 		} catch (Exception e) {
