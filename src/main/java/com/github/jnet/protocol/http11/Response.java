@@ -11,9 +11,22 @@ public class Response {
 	private Map<String, String> cookie = new HashMap<String, String>();
 	private StringBuilder res = new StringBuilder();
 	private String charset = "UTF-8";
+	private int statusCode = 200;
 
 	public void write(String str) {
 		res.append(str);
+	}
+
+	public int getStatusCode() {
+		return statusCode;
+	}
+
+	public Map<String, String> getHeader() {
+		return header;
+	}
+
+	public void setStatusCode(int statusCode) {
+		this.statusCode = statusCode;
 	}
 
 	public void reset() {
@@ -22,7 +35,7 @@ public class Response {
 		res = new StringBuilder();
 	}
 
-	public byte[] toBytes() throws UnsupportedEncodingException {	
+	public byte[] toBytes() throws UnsupportedEncodingException {
 		byte[] body = res.toString().getBytes(charset);
 		header.put(HttpAttr.HEAD_CONTENT_LEN,
 				((Integer) body.length).toString());
@@ -32,7 +45,17 @@ public class Response {
 		}
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("HTTP/1.1 200 OK\r\n");
+		switch (this.statusCode) {
+		case 200:
+			sb.append("HTTP/1.1 200 OK\r\n");
+			break;
+		case 302:
+			sb.append("HTTP/1.1 302 Moved \r\n");		
+			break;
+		case 500:
+			sb.append("HTTP/1.1 500 INTERNAL SERVER ERROR\r\n");
+			break;
+		}
 
 		Iterator<Map.Entry<String, String>> it = header.entrySet().iterator();
 		while (it.hasNext()) {

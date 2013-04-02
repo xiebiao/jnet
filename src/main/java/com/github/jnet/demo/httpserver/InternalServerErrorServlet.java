@@ -4,10 +4,12 @@ import com.github.jnet.protocol.http11.Request;
 import com.github.jnet.protocol.http11.Response;
 import com.github.jnet.protocol.http11.Servlet;
 
-public class ErrorServlet implements Servlet {
+public class InternalServerErrorServlet implements Servlet {
 
+	@Override
 	public void doRequest(Request request, Response response) throws Exception {
-		response.write("this action not found");
+		response.setStatusCode(500);
+		response.write("系统内部错误");
 	}
 
 }

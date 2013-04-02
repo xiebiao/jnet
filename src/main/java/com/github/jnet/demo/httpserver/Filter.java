@@ -19,7 +19,13 @@ public class Filter implements ServletFilter {
 		if (url.indexOf("time") >= 0) {
 			return new TimeServlet();
 		}
-		return new ErrorServlet();
+		if (url.indexOf("error") >= 0) {
+			return new InternalServerErrorServlet();
+		}
+		if (url.indexOf("moved") >= 0) {
+			return new MovedServlet();
+		}
+		return new NotFoundServlet();
 	}
 
 }

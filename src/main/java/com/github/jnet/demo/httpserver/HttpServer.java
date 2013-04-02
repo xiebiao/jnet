@@ -27,7 +27,7 @@ public class HttpServer extends Server<HttpSession> {
 		config.port = port;
 		config.readTimeout = 2000;
 		config.writeTimeout = 2000;
-		config.ip = "10.28.164.84";
+		config.ip = "localhost";
 	//	config.keepalive = true;
 		config.maxConnection = 100;
 		HttpServer server = new HttpServer(config, HttpSession.class);
