@@ -1,4 +1,4 @@
-package com.github.jnet.demo.echoserver;
+package com.github.jnet.demo.echo;
 
 import com.github.jnet.Configuration;
 import com.github.jnet.Server;

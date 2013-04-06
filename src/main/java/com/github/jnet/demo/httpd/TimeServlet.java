@@ -1,4 +1,4 @@
-package com.github.jnet.demo.httpserver;
+package com.github.jnet.demo.httpd;
 
 import java.util.Date;
 

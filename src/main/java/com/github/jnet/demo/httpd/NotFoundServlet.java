@@ -1,4 +1,4 @@
-package com.github.jnet.demo.httpserver;
+package com.github.jnet.demo.httpd;
 
 import com.github.jnet.protocol.http11.Request;
 import com.github.jnet.protocol.http11.Response;

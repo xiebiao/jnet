@@ -1,4 +1,4 @@
-package com.github.jnet.demo.httpserver;
+package com.github.jnet.demo.httpd;
 
 import com.github.jnet.Configuration;
 import com.github.jnet.Server;

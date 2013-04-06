@@ -1,4 +1,4 @@
-package com.github.jnet.demo.echoserver;
+package com.github.jnet.demo.echo;
 
 
 import org.slf4j.Logger;
