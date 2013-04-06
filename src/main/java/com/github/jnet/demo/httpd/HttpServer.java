@@ -13,7 +13,7 @@ public class HttpServer extends Server<HttpSession> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		
+
 		Configuration config = new Configuration();
 		HttpServer server = new HttpServer(config, HttpSession.class);
 		// server.setSessionHandler(HttpSession.class);

@@ -31,11 +31,21 @@ public abstract class Server<T extends Session> {
 	private ServerSocketChannel socket;
 	private int nextWorkerIndex = 0;
 	private Class<T> sessionHandler;
+	private String name;
 
 	public Server(Configuration config, Class<T> sessionHandler) {
 		this.config = config;
 		this.sessionHandler = sessionHandler;
 		workers = new Worker[config.getThreadNumber()];
+		name = "Server";
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return this.name;
 	}
 
 	/**
@@ -66,7 +76,7 @@ public abstract class Server<T extends Session> {
 			workers[i] = new Worker(this.config);
 			pool.execute(workers[i]);
 		}
-		logger.info("Server: " + this.config.toString());
+		logger.info(this.name + ": " + this.config.toString());
 		SocketChannel csocket = null;
 		while (true) {
 			selector.select();
