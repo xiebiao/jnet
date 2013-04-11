@@ -128,32 +128,38 @@ public class Worker implements Runnable {
 
 	}
 
+	/**
+	 * 更新session状态
+	 * 
+	 * @param session
+	 * @throws ClosedChannelException
+	 */
 	private void updateSession(Session session) throws ClosedChannelException {
 		if (session.getCurrentState() == IOState.READ
 				&& session.getReadBuffer().remaining() > 0) {
 			if (this.config.getReadTimeout() > 0) {
-				/** 根据配置设置读取超时 */
 				if (session.getNextTimeout() > System.currentTimeMillis()) {
-					/** 读取已超时 */
+					/** 读操作已超时 */
 					session.setNextTimeout(System.currentTimeMillis()
 							+ this.config.getReadTimeout());
 					addTimeoutSession(session);
 				}
 			}
+			/** session注册socket读事件 */
 			session.getSocket().register(selector, SelectionKey.OP_READ,
 					session);
 
 		} else if (session.getCurrentState() == IOState.WRITE
 				&& session.getWriteBuffer().remaining() > 0) {
 			if (this.config.getWriteTimeout() > 0) {
-				/** 根据配置设置写超时 */
 				if (session.getNextTimeout() > System.currentTimeMillis()) {
-					/** 读取已超时 */
+					/** 写操作已超时 */
 					session.setNextTimeout(System.currentTimeMillis()
 							+ this.config.getReadTimeout());
 					addTimeoutSession(session);
 				}
 			}
+			/** session注册socket读事件 */
 			session.getSocket().register(selector, SelectionKey.OP_WRITE,
 					session);
 		} else {
@@ -163,28 +169,23 @@ public class Worker implements Runnable {
 	}
 
 	/**
-	 * 检测有IO或超时事件的session，并加入到eventSessionList中
 	 * 
-	 * @param time
+	 * @param timeout
 	 */
-	private void checkEventSession(long time) {
+	private void checkEventSession(long timeout) {
 		eventSessionList.clear();
 		Iterator<SelectionKey> keyIter = selector.selectedKeys().iterator();
 		while (keyIter.hasNext()) {
 			SelectionKey key = keyIter.next();
 			keyIter.remove();
 			Session session = (Session) key.attachment();
-			// session.setCurrentEvent(session.getCurrentState() ==
-			// Session.EVENT_READ ? Session.EVENT_READ
-			// : Session.EVENT_WRITE);
 			eventSessionList.add(session);
-			// timeoutSessionSet.remove(session);
 		}
-
+		/** 处理timeout */
 		Iterator<Session> sessionIter = timeoutSessionSet.iterator();
 		while (sessionIter.hasNext()) {
 			Session session = sessionIter.next();
-			if (session.getNextTimeout() <= time) {
+			if (session.getNextTimeout() <= timeout) {
 				session.setCurrentEvent(SessionEvent.TIMEOUT);
 				eventSessionList.add(session);
 				sessionIter.remove();
@@ -245,7 +246,7 @@ public class Worker implements Runnable {
 
 			if (curState == IOState.READ) {
 				if (remain == 0) {
-					session.complateRead(session.getReadBuffer(),
+					session.readCompleted(session.getReadBuffer(),
 							session.getWriteBuffer());
 					logger.debug("Session[" + session.getId()
 							+ "] is readComplated.");
@@ -255,7 +256,7 @@ public class Worker implements Runnable {
 				}
 			} else {
 				if (remain == 0) {
-					session.complateWrite(session.getReadBuffer(),
+					session.writeCompleted(session.getReadBuffer(),
 							session.getWriteBuffer());
 					logger.debug("Session[" + session.getId()
 							+ "] is writeComplated.");

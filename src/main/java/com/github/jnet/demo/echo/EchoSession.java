@@ -14,7 +14,7 @@ public class EchoSession extends Session {
 	static final int BUF_SIZE = 1024;
 
 	@Override
-	public void complateRead(IOBuffer readBuf, IOBuffer writeBuf)
+	public void readCompleted(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
 		reading(readBuf, writeBuf);
 	}
@@ -39,7 +39,7 @@ public class EchoSession extends Session {
 	}
 
 	@Override
-	public void complateWrite(IOBuffer readBuf, IOBuffer writeBuf)
+	public void writeCompleted(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
 
 		readBuf.position(0);

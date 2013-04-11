@@ -43,13 +43,13 @@ public abstract class Session {
 	public abstract void open(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception;
 
-	public abstract void complateRead(IOBuffer readBuf, IOBuffer writeBuf)
+	public abstract void readCompleted(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception;
 
 	public abstract void reading(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception;
 
-	public abstract void complateWrite(IOBuffer readBuf, IOBuffer writeBuf)
+	public abstract void writeCompleted(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception;
 
 	public abstract void writing(IOBuffer readBuf, IOBuffer writeBuf)
@@ -156,10 +156,6 @@ public abstract class Session {
 
 	public IOState getCurrentState() {
 		return currentState;
-	}
-
-	public void setCurrentState(IOState currentState) {
-		this.currentState = currentState;
 	}
 
 }

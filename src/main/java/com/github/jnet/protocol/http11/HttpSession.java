@@ -102,9 +102,9 @@ public class HttpSession extends Session {
 	}
 
 	@Override
-	public void complateRead(IOBuffer readBuf, IOBuffer writeBuf)
+	public void readCompleted(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
-		reading(readBuf, writeBuf);
+		this.setNextState(IOState.CLOSE);
 	}
 
 	@Override
@@ -134,6 +134,7 @@ public class HttpSession extends Session {
 			setNextState(IOState.WRITE);
 			return;
 		}
+		/** 读取剩下buffer */
 		remainToRead(BUF_SIZE);
 	}
 
@@ -153,7 +154,7 @@ public class HttpSession extends Session {
 	}
 
 	@Override
-	public void complateWrite(IOBuffer readBuf, IOBuffer writeBuf)
+	public void writeCompleted(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
 		setNextState(IOState.CLOSE);
 	}
