@@ -114,12 +114,11 @@ public class Worker implements Runnable {
 	public void initNewSession(Session session) {
 		try {
 			/** 初始化buffer */
-			session.getReadBuffer().position(0);
-			session.getReadBuffer().limit(0);
-			session.getWriteBuffer().position(0);
-			session.getWriteBuffer().limit(0);
-
-			session.open(session.getReadBuffer(), session.getWriteBuffer());
+			session.readBuffer.position(0);
+			session.readBuffer.limit(0);
+			session.writeBuffer.position(0);
+			session.writeBuffer.limit(0);
+			session.open(session.readBuffer, session.writeBuffer);
 			updateSession(session);
 		} catch (Exception e) {
 			close(session);
@@ -136,7 +135,7 @@ public class Worker implements Runnable {
 	 */
 	private void updateSession(Session session) throws ClosedChannelException {
 		if (session.getCurrentState() == IOState.READ
-				&& session.getReadBuffer().remaining() > 0) {
+				&& session.readBuffer.remaining() > 0) {
 			if (this.config.getReadTimeout() > 0) {
 				if (session.getNextTimeout() > System.currentTimeMillis()) {
 					/** 读操作已超时 */
@@ -150,7 +149,7 @@ public class Worker implements Runnable {
 					session);
 
 		} else if (session.getCurrentState() == IOState.WRITE
-				&& session.getWriteBuffer().remaining() > 0) {
+				&& session.writeBuffer.remaining() > 0) {
 			if (this.config.getWriteTimeout() > 0) {
 				if (session.getNextTimeout() > System.currentTimeMillis()) {
 					/** 写操作已超时 */
@@ -246,23 +245,21 @@ public class Worker implements Runnable {
 
 			if (curState == IOState.READ) {
 				if (remain == 0) {
-					session.readCompleted(session.getReadBuffer(),
-							session.getWriteBuffer());
+					session.readCompleted(session.readBuffer,
+							session.writeBuffer);
 					logger.debug("Session[" + session.getId()
 							+ "] is readComplated.");
 				} else {
-					session.reading(session.getReadBuffer(),
-							session.getWriteBuffer());
+					session.reading(session.readBuffer, session.writeBuffer);
 				}
 			} else {
 				if (remain == 0) {
-					session.writeCompleted(session.getReadBuffer(),
-							session.getWriteBuffer());
+					session.writeCompleted(session.readBuffer,
+							session.writeBuffer);
 					logger.debug("Session[" + session.getId()
 							+ "] is writeComplated.");
 				} else {
-					session.writing(session.getReadBuffer(),
-							session.getWriteBuffer());
+					session.writing(session.readBuffer, session.writeBuffer);
 				}
 			}
 			if (len == 0 || session.getCurrentState() != curState) {
@@ -280,7 +277,7 @@ public class Worker implements Runnable {
 	 * @throws Exception
 	 */
 	public void readEvent(Session session) throws Exception {
-		ioEvent(session, session.getReadBuffer());
+		ioEvent(session, session.readBuffer);
 	}
 
 	/**
@@ -290,7 +287,7 @@ public class Worker implements Runnable {
 	 * @throws ClosedChannelException
 	 */
 	public void writeEvent(Session session) throws Exception {
-		ioEvent(session, session.getWriteBuffer());
+		ioEvent(session, session.writeBuffer);
 	}
 
 	/**

@@ -76,7 +76,7 @@ public abstract class Server<T extends Session> {
 			workers[i] = new Worker(this.config);
 			pool.execute(workers[i]);
 		}
-		logger.info(this.name + ": " + this.config.toString());
+		logger.info("Started: " + this.config.toString());
 		SocketChannel csocket = null;
 		while (true) {
 			selector.select();

@@ -94,7 +94,8 @@ public class Configuration {
 
 	public String toString() {
 		return "{ip=" + ip + ", port=" + port + ", threadNumber="
-				+ threadNumber + ", readTimeout=" + readTimeout
-				+ ", writeTimeout=" + writeTimeout + "}";
+				+ threadNumber + ", maxConnection=" + maxConnection
+				+ ",readTimeout=" + readTimeout + ", writeTimeout="
+				+ writeTimeout + "}";
 	}
 }

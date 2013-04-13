@@ -10,30 +10,28 @@ import com.github.jnet.utils.IOBuffer;
 public abstract class Session {
 	private static final Logger logger = LoggerFactory.getLogger(Session.class);
 	/**
-	 *会话id
+	 * 会话id
 	 */
-	private int id = 0;
+	protected int id = 0;
 
 	/**
 	 * 下一次超时时间点（时间戳）
 	 */
-	private long nextTimeout = 0;
+	protected long nextTimeout = 0;
 	/**
 	 * 当前IO状态
 	 */
-	private IOState currentState;
+	protected IOState currentState;
 	/**
 	 * 当前会话事件
 	 */
-	private SessionEvent currentEvent = SessionEvent.READ;
+	protected SessionEvent currentEvent = SessionEvent.READ;
 
-	private IOBuffer readBuffer = null;
+	protected IOBuffer readBuffer = null;
 
-	private IOBuffer writeBuffer = null;
+	protected IOBuffer writeBuffer = null;
 
-	private SocketChannel socket = null;
-
-	//private Configuration config = null;
+	protected SocketChannel socket = null;
 
 	private boolean inuse = false;
 
@@ -65,13 +63,19 @@ public abstract class Session {
 
 	public void setNextState(IOState state) {
 		this.currentState = state;
-		if (state == IOState.WRITE) {
+		switch (state) {
+		case WRITE:
 			readBuffer.position(0);
 			readBuffer.limit(0);
-		} else if (state == IOState.READ) {
+			break;
+		case READ:
 			writeBuffer.position(0);
 			writeBuffer.limit(0);
+			break;
+		case CLOSE:
+			this.close();
 		}
+
 		switch (state) {
 		case READ:
 			logger.debug("Set the Session[" + this.getId() + "]'s state to"
@@ -114,10 +118,6 @@ public abstract class Session {
 		this.currentEvent = event;
 	}
 
-	public IOBuffer getReadBuffer() {
-		return readBuffer;
-	}
-
 	public void setReadBuffer(IOBuffer readBuf) {
 		this.readBuffer = readBuf;
 	}
@@ -136,10 +136,6 @@ public abstract class Session {
 
 	public void setInuse(boolean inuse) {
 		this.inuse = inuse;
-	}
-	
-	public IOBuffer getWriteBuffer() {
-		return writeBuffer;
 	}
 
 	public void setWriteBuffer(IOBuffer writeBuffer) {

@@ -1,6 +1,5 @@
 package com.github.jnet.demo.echo;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,14 +40,14 @@ public class EchoSession extends Session {
 	@Override
 	public void writeCompleted(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
-
+		logger.debug("writeCompleted");
 		readBuf.position(0);
 		remainToRead(BUF_SIZE);
 	}
 
 	@Override
 	public void open(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
-
+		logger.debug("open");
 		remainToRead(BUF_SIZE);
 	}
 
@@ -58,7 +57,7 @@ public class EchoSession extends Session {
 	}
 
 	public String toString() {
-		return "sessson:{id=" + this.getId() + "}";
+		return "Sessson[" + this.getId() + "]";
 	}
 
 	@Override

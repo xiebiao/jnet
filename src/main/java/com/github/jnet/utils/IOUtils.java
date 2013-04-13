@@ -30,8 +30,8 @@ public final class IOUtils {
 
 	public static int read(Session session, SocketChannel socket, IOBuffer buf)
 			throws IOException {
-		logger.debug("Session[" + session.getId() + "] is reading \n"
-				+ buf.toString());
+//		logger.debug("Session[" + session.getId() + "] is reading \n"
+//				+ buf.toString());
 		return read(socket, buf);
 	}
 
