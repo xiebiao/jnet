@@ -36,7 +36,7 @@ public final class SessionManager {
 				Session session = sessionIter.next();
 				if (!session.isInuse()) {
 					session.setInuse(true);
-					logger.debug("Get Session[" + session.getId()
+					logger.info("Get Session[" + session.getId()
 							+ "] from pool.");
 					return session;
 				}
@@ -46,7 +46,7 @@ public final class SessionManager {
 	}
 
 	public static void closeSession(Session session) {
-		logger.debug("Session[" + session.getId()
+		logger.info("Session[" + session.getId()
 				+ "] is closed,put it back to pool.");
 		synchronized (lock) {
 			session.setInuse(false);

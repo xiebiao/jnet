@@ -236,31 +236,39 @@ public class Worker implements Runnable {
 		while (buf.remaining() > 0) {
 			int len = 0;
 			IOState curState = session.getCurrentState();
-			if (curState == IOState.READ) {
+			/** ------------------------------- 处理IO */
+			switch (curState) {
+			case READ:
 				len = IOUtils.read(session, session.getSocket(), buf);
-			} else {
+				break;
+			case WRITE:
 				len = IOUtils.write(session, session.getSocket(), buf);
+				break;
+			case CLOSE:
+				break;
 			}
 			int remain = buf.remaining();
-
-			if (curState == IOState.READ) {
+			/** ------------------------------- 处理session */
+			switch (curState) {
+			case READ:
 				if (remain == 0) {
 					session.readCompleted(session.readBuffer,
 							session.writeBuffer);
-					logger.debug("Session[" + session.getId()
-							+ "] is readComplated.");
 				} else {
 					session.reading(session.readBuffer, session.writeBuffer);
 				}
-			} else {
+				break;
+			case WRITE:
 				if (remain == 0) {
 					session.writeCompleted(session.readBuffer,
 							session.writeBuffer);
-					logger.debug("Session[" + session.getId()
-							+ "] is writeComplated.");
 				} else {
 					session.writing(session.readBuffer, session.writeBuffer);
 				}
+				break;
+			case CLOSE:
+				break;
+
 			}
 			if (len == 0 || session.getCurrentState() != curState) {
 				/** 更新session状态 */

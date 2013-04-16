@@ -78,15 +78,15 @@ public abstract class Session {
 
 		switch (state) {
 		case READ:
-			logger.debug("Set the Session[" + this.getId() + "]'s state to"
+			logger.info("Set the Session[" + this.getId() + "]'s state to"
 					+ " STATE_READ");
 			break;
 		case WRITE:
-			logger.debug("Set the Session[" + this.getId() + "]'s state to"
+			logger.info("Set the Session[" + this.getId() + "]'s state to"
 					+ " STATE_WRITE");
 			break;
 		case CLOSE:
-			logger.debug("Set the Session[" + this.getId() + "]'s state to"
+			logger.info("Set the Session[" + this.getId() + "]'s state to"
 					+ " STATE_CLOSE");
 			break;
 		}

@@ -11,7 +11,8 @@ public class HttpSession extends Session {
 	private static final Logger logger = LoggerFactory
 			.getLogger(HttpSession.class);
 
-	private static final int BUF_SIZE = 2048;// (2M)
+	/** Session每次最多读取数据大小(KB) */
+	private static final int BUF_SIZE = 512;
 	private static final int STATE_READ_HEAD = 0;
 	private static final int STATE_READ_BODY = 1;
 
@@ -110,7 +111,8 @@ public class HttpSession extends Session {
 	@Override
 	public void reading(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
 
-		logger.debug("Poccess the Session[" + this.getId() + "].");
+		logger.debug("Poccess the Session[" + this.getId() + "] ");
+		logger.debug(readBuf.toString());
 		if (currentState == STATE_READ_HEAD) {
 			String buf = readBuf.getString("ASCII");
 			int endPos = buf.indexOf("\r\n\r\n");

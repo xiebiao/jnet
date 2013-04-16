@@ -15,7 +15,7 @@ public class EchoSession extends Session {
 	@Override
 	public void readCompleted(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
-		reading(readBuf, writeBuf);
+		this.setNextState(IOState.WRITE);
 	}
 
 	@Override
@@ -27,7 +27,6 @@ public class EchoSession extends Session {
 				int len = readBuf.position();
 				writeBuf.position(0);
 				writeBuf.writeBytes(readBuf.readBytes(0, len));
-
 				writeBuf.position(0);
 				writeBuf.limit(len);
 				setNextState(IOState.WRITE);
@@ -41,13 +40,14 @@ public class EchoSession extends Session {
 	public void writeCompleted(IOBuffer readBuf, IOBuffer writeBuf)
 			throws Exception {
 		logger.debug("writeCompleted");
+		/** Session未关闭，则继续读取IO,同时position复位 */
 		readBuf.position(0);
 		remainToRead(BUF_SIZE);
 	}
 
 	@Override
 	public void open(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
-		logger.debug("open");
+		logger.debug("Open session");
 		remainToRead(BUF_SIZE);
 	}
 
