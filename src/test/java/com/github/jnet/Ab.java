@@ -1,4 +1,4 @@
-package jnet.core.test;
+package com.github.jnet;
 
 import java.io.UnsupportedEncodingException;
 

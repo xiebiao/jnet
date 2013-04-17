@@ -47,7 +47,7 @@ public final class SessionManager {
 		return null;
 	}
 
-	public void closeSession(Session session) {
+	public void close(Session session) {
 		logger.info("Session[" + session.getId()
 				+ "] is closed,put it back to pool.");
 		synchronized (lock) {
@@ -55,9 +55,21 @@ public final class SessionManager {
 		}
 	}
 
+	public void destroy() {
+		synchronized (lock) {
+			for (int i = 0; i < sessionList.size(); i++) {
+				Session session = sessionList.get(i);
+				session.setNextState(IOState.CLOSE);
+				session = null;
+			}
+			sessionList = null;
+		}
+	}
+
 	public <T> void initialize(Class<T> clazz, int capacity) throws Exception {
-		if (sessionList != null && sessionList.size() == capacity) {
-			throw new java.lang.Exception("Session pool has initialized.");
+		if (sessionList.size() > 0) {
+			throw new java.lang.IllegalStateException(
+					"Session pool has initialized");
 		}
 		for (int i = 0; i < capacity; i++) {
 			Object obj = clazz.newInstance();

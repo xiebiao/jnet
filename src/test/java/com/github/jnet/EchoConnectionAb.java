@@ -1,4 +1,4 @@
-package jnet.core.test;
+package com.github.jnet;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;

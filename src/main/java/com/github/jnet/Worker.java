@@ -320,7 +320,7 @@ public class Worker implements Runnable {
 			session.setSocket(null);
 		}
 		timeoutSessionSet.remove(session);
-		this.sessionManager.closeSession(session);
+		this.sessionManager.close(session);
 		session.close();
 	}
 }
