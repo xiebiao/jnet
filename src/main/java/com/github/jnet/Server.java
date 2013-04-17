@@ -13,8 +13,6 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnet.utils.IOBuffer;
-
 /**
  * <p>
  * </p>
@@ -32,6 +30,7 @@ public abstract class Server<T extends Session> {
 	private int nextWorkerIndex = 0;
 	private Class<T> sessionHandler;
 	private String name;
+	private SessionManager sessionManager = SessionManager.getInstance();
 
 	public Server(Configuration config, Class<T> sessionHandler) {
 		this.config = config;
@@ -54,15 +53,7 @@ public abstract class Server<T extends Session> {
 	 * @throws Exception
 	 */
 	public void start() throws Exception {
-		for (int i = 0; i < config.getMaxConnection(); i++) {
-			Session session = this.sessionHandler.newInstance();
-			session.setId(i);
-			session.setCurrentEvent(SessionEvent.READ);
-			session.setInuse(false);
-			session.setReadBuffer(new IOBuffer());
-			session.setWriteBuffer(new IOBuffer());
-			SessionManager.addSession(session);
-		}
+		sessionManager.initialize(this.sessionHandler, config.getMaxConnection());
 		try {
 			init();
 		} catch (Exception e) {
@@ -73,7 +64,7 @@ public abstract class Server<T extends Session> {
 		ExecutorService pool = Executors.newFixedThreadPool(config
 				.getThreadNumber());
 		for (int i = 0; i < workers.length; i++) {
-			workers[i] = new Worker(this.config);
+			workers[i] = new Worker(sessionManager, this.config);
 			pool.execute(workers[i]);
 		}
 		logger.info("Started: " + this.config.toString());
@@ -83,7 +74,7 @@ public abstract class Server<T extends Session> {
 			try {
 				csocket = socket.accept();
 				csocket.configureBlocking(false);
-				Session session = SessionManager.getSession();
+				Session session = sessionManager.getSession();
 				if (session == null) {
 					logger.error("Too many connection.");
 					csocket.close();
@@ -103,7 +94,6 @@ public abstract class Server<T extends Session> {
 	}
 
 	public void init() throws IOException {
-
 		selector = Selector.open();
 		socket = ServerSocketChannel.open();
 		socket.socket().setReuseAddress(true);

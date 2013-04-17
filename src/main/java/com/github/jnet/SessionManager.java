@@ -7,6 +7,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.jnet.utils.IOBuffer;
+
 /**
  * <p>
  * 会话管理
@@ -29,7 +31,7 @@ public final class SessionManager {
 		return sessionManager;
 	}
 
-	public static Session getSession() {
+	public Session getSession() {
 		synchronized (lock) {
 			Iterator<Session> sessionIter = sessionList.iterator();
 			while (sessionIter.hasNext()) {
@@ -45,11 +47,27 @@ public final class SessionManager {
 		return null;
 	}
 
-	public static void closeSession(Session session) {
+	public void closeSession(Session session) {
 		logger.info("Session[" + session.getId()
 				+ "] is closed,put it back to pool.");
 		synchronized (lock) {
 			session.setInuse(false);
+		}
+	}
+
+	public <T> void initialize(Class<T> clazz, int capacity) throws Exception {
+		if (sessionList != null && sessionList.size() == capacity) {
+			throw new java.lang.Exception("Session pool has initialized.");
+		}
+		for (int i = 0; i < capacity; i++) {
+			Object obj = clazz.newInstance();
+			Session session = (Session) obj;
+			session.setId(i);
+			session.setCurrentEvent(SessionEvent.READ);
+			session.setInuse(false);
+			session.setReadBuffer(new IOBuffer());
+			session.setWriteBuffer(new IOBuffer());
+			sessionList.add(session);
 		}
 	}
 

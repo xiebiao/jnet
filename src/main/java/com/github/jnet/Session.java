@@ -36,6 +36,7 @@ public abstract class Session {
 	private boolean inuse = false;
 
 	public Session() {
+		id = 0;
 	}
 
 	public abstract void open(IOBuffer readBuf, IOBuffer writeBuf)

@@ -1,6 +1,6 @@
 package com.github.jnet.demo.httpd;
 
-import com.github.jnet.protocol.http11.HttpAttr;
+import com.github.jnet.protocol.http11.HttpHeader;
 import com.github.jnet.protocol.http11.Request;
 import com.github.jnet.protocol.http11.Servlet;
 import com.github.jnet.protocol.http11.ServletFilter;
@@ -8,7 +8,7 @@ import com.github.jnet.protocol.http11.ServletFilter;
 public class Filter implements ServletFilter {
 
 	public Servlet getServlet(Request request) {
-		String url = request.header.get(HttpAttr.HEAD_URL);
+		String url = request.header.get(HttpHeader.HEAD_URL);
 		int pos = url.indexOf("?");
 		if (pos >= 0) {
 			url = url.substring(0,pos);

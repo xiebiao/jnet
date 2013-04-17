@@ -23,6 +23,7 @@ public class Worker implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(Worker.class);
 	private Selector selector;
 	private Configuration config;
+	private SessionManager sessionManager;
 	private Queue<Session> newSessionQueue = new ConcurrentLinkedQueue<Session>();
 	private List<Session> eventSessionList = new ArrayList<Session>();
 	private Set<Session> timeoutSessionSet = new TreeSet<Session>(
@@ -38,8 +39,9 @@ public class Worker implements Runnable {
 				}
 			});
 
-	public Worker(Configuration config) throws IOException {
+	public Worker(SessionManager sm, Configuration config) throws IOException {
 		this.config = config;
+		this.sessionManager = sm;
 		selector = Selector.open();
 	}
 
@@ -318,8 +320,7 @@ public class Worker implements Runnable {
 			session.setSocket(null);
 		}
 		timeoutSessionSet.remove(session);
-		SessionManager.closeSession(session);
+		this.sessionManager.closeSession(session);
 		session.close();
 	}
-
 }

@@ -31,7 +31,7 @@ public class HttpSession extends Session {
 	}
 
 	private void parseHeader(String header) throws Exception {
-		logger.debug(this.toString() + "Parse HTTP Header");
+		logger.info(this.toString() + " Parse HTTP Header");
 		String[] lines = header.split("\r\n");
 		if (lines.length == 0) {
 			throw new Exception("invalid header");
@@ -45,11 +45,9 @@ public class HttpSession extends Session {
 		if (!row[0].equals("GET") && !row[0].equals("POST")) {
 			throw new Exception("invalid header");
 		}
-
-		request.header.put(HttpAttr.HEAD_METHOD, row[0].trim());
-		request.header.put(HttpAttr.HEAD_URL, row[1].trim());
-		request.header.put(HttpAttr.HEAD_VERSION, row[2].trim());
-
+		request.header.put(HttpHeader.HEAD_METHOD, row[0].trim());
+		request.header.put(HttpHeader.HEAD_URL, row[1].trim());
+		request.header.put(HttpHeader.HEAD_VERSION, row[2].trim());
 		for (String line : lines) {
 			row = line.split(": ");
 			if (row.length != 2) {
@@ -57,13 +55,11 @@ public class HttpSession extends Session {
 			}
 			request.header.put(row[0].trim(), row[1].trim());
 		}
-
-		if (!request.header.containsKey(HttpAttr.HEAD_CONTENT_LEN)) {
-			request.header.put(HttpAttr.HEAD_CONTENT_LEN, "0");
+		if (!request.header.containsKey(HttpHeader.CONTENT_LENGTH)) {
+			request.header.put(HttpHeader.CONTENT_LENGTH, "0");
 		}
-
 		bodyLen = Integer.parseInt(request.header
-				.get(HttpAttr.HEAD_CONTENT_LEN));
+				.get(HttpHeader.CONTENT_LENGTH));
 		if (bodyLen < 0) {
 			throw new Exception("invalid header");
 		}
@@ -71,14 +67,13 @@ public class HttpSession extends Session {
 	}
 
 	void parseBody(String body) {
-		logger.debug(this.toString() + "Parse HTTP Body");
+		logger.info(this.toString() + "parse HTTP Body");
 		String paramStr = body;
-		String url = request.header.get(HttpAttr.HEAD_URL);
+		String url = request.header.get(HttpHeader.HEAD_URL);
 		int paramPos = url.indexOf("?");
 		if (paramPos >= 0) {
 			paramStr = url.substring(paramPos + 1) + paramStr;
 		}
-
 		String[] params = paramStr.split("&");
 		String[] row;
 		for (String line : params) {
@@ -88,9 +83,8 @@ public class HttpSession extends Session {
 			}
 			request.params.put(row[0].trim(), row[1].trim());
 		}
-
-		if (request.header.containsKey(HttpAttr.HEAD_COOKIE)) {
-			String cookieStr = request.header.get(HttpAttr.HEAD_COOKIE);
+		if (request.header.containsKey(HttpHeader.HEAD_COOKIE)) {
+			String cookieStr = request.header.get(HttpHeader.HEAD_COOKIE);
 			String[] cookies = cookieStr.split(";");
 			for (String line : cookies) {
 				row = line.split("=");
@@ -110,8 +104,7 @@ public class HttpSession extends Session {
 
 	@Override
 	public void reading(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
-
-		logger.debug("Poccess the Session[" + this.getId() + "] ");
+		logger.info("Poccess the Session[" + this.getId() + "] ");
 		logger.debug(readBuf.toString());
 		if (currentState == STATE_READ_HEAD) {
 			String buf = readBuf.getString("ASCII");
@@ -152,7 +145,7 @@ public class HttpSession extends Session {
 		writeBuf.position(0);
 		request.reset();
 		response.reset();
-		logger.debug("Write buffer to Session[" + this.getId() + "].");
+		logger.info("Write buffer to Session[" + this.getId() + "].");
 	}
 
 	@Override
@@ -172,7 +165,7 @@ public class HttpSession extends Session {
 
 	@Override
 	public void writing(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
-		logger.debug(this.toString() + " writing...");
+		logger.info(this.toString() + " writing...");
 
 	}
 

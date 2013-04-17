@@ -37,11 +37,11 @@ public class Response {
 
 	public byte[] toBytes() throws UnsupportedEncodingException {
 		byte[] body = res.toString().getBytes(charset);
-		header.put(HttpAttr.HEAD_CONTENT_LEN,
+		header.put(HttpHeader.CONTENT_LENGTH,
 				((Integer) body.length).toString());
 
-		if (!header.containsKey(HttpAttr.HEAD_CONTENT_TYPE)) {
-			header.put(HttpAttr.HEAD_CONTENT_TYPE, "text/html");
+		if (!header.containsKey(HttpHeader.HEAD_CONTENT_TYPE)) {
+			header.put(HttpHeader.HEAD_CONTENT_TYPE, "text/html");
 		}
 
 		StringBuilder sb = new StringBuilder();
