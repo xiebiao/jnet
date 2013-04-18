@@ -82,8 +82,4 @@ public final class SessionManager {
 			sessionList.add(session);
 		}
 	}
-
-	public static void addSession(Session session) {
-		sessionList.add(session);
-	}
 }
