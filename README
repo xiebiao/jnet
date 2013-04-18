@@ -1,9 +1,4 @@
-   _            _   
-  (_)_ __   ___| |_ 
-  | | '_ \ / _ \ __|
-  | | | | |  __/ |_ 
- _/ |_| |_|\___|\__|
-|__/                
-===========================
+Jnet
+=======
 
-A simple java net framework
+A simple java nio server framework.
