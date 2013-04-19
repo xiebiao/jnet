@@ -21,7 +21,7 @@ public final class SessionManager {
 	private static final Logger logger = LoggerFactory
 			.getLogger(SessionManager.class);
 	private static List<Session> sessionList = new ArrayList<Session>();
-	private static Boolean lock = false;
+	private volatile Boolean lock = false;
 	private static SessionManager sessionManager = new SessionManager();
 
 	private SessionManager() {
