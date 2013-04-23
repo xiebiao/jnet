@@ -15,7 +15,7 @@ public class HttpServer extends Server<HttpSession> {
 	public static void main(String[] args) throws Exception {
 
 		Configuration config = new Configuration();
-		config.setIp("10.28.162.84");
+		config.setIp("127.0.0.1");
 		config.setReadTimeout(100);
 		config.setWriteTimeout(100);
 		HttpServer server = new HttpServer(config, HttpSession.class);
