@@ -16,6 +16,8 @@ public class HttpServer extends Server<HttpSession> {
 
 		Configuration config = new Configuration();
 		config.setIp("10.28.162.84");
+		config.setReadTimeout(100);
+		config.setWriteTimeout(100);
 		HttpServer server = new HttpServer(config, HttpSession.class);
 		// server.setSessionHandler(HttpSession.class);
 		ServletFactory.filter = (ServletFilter) new Filter();

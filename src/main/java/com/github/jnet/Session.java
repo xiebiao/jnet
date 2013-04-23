@@ -90,15 +90,15 @@ public abstract class Session {
 		switch (state) {
 		case READ:
 			logger.info("Set the Session[" + this.getId() + "]'s state to"
-					+ " STATE_READ");
+					+ " STATE_READ.");
 			break;
 		case WRITE:
 			logger.info("Set the Session[" + this.getId() + "]'s state to"
-					+ " STATE_WRITE");
+					+ " STATE_WRITE.");
 			break;
 		case CLOSE:
 			logger.info("Set the Session[" + this.getId() + "]'s state to"
-					+ " STATE_CLOSE");
+					+ " STATE_CLOSE.");
 			break;
 		}
 	}

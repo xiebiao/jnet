@@ -49,7 +49,7 @@ public final class SessionManager {
 
 	public void close(Session session) {
 		logger.info("Session[" + session.getId()
-				+ "] is closed,put it back to pool");
+				+ "] is closed,put it back to pool.");
 		synchronized (lock) {
 			session.setInuse(false);
 		}

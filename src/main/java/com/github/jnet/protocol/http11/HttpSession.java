@@ -66,7 +66,7 @@ public class HttpSession extends Session {
 	}
 
 	void parseBody(String body) {
-		logger.info(this.toString() + "parse HTTP Body");
+		logger.info(this.toString() + "parse HTTP Body.");
 		String paramStr = body;
 		String url = request.header.get(HttpHeader.HEAD_URL);
 		int paramPos = url.indexOf("?");
