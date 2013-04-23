@@ -3,9 +3,8 @@ package com.github.jnet.demo.echo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnet.IOState;
 import com.github.jnet.Session;
-import com.github.jnet.utils.IOBuffer;
+import com.github.jnet.utils.IoBuffer;
 
 public class EchoSession extends Session {
 	private static final Logger logger = LoggerFactory
@@ -13,13 +12,13 @@ public class EchoSession extends Session {
 	static final int BUF_SIZE = 1024;
 
 	@Override
-	public void readCompleted(IOBuffer readBuf, IOBuffer writeBuf)
+	public void readCompleted(IoBuffer readBuf, IoBuffer writeBuf)
 			throws Exception {
-		this.setNextState(IOState.WRITE);
+		this.setNextState(IoState.WRITE);
 	}
 
 	@Override
-	public void reading(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
+	public void reading(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
 		logger.debug(this.toString() + " reading...");
 		if (readBuf.position() > 1) {
 			byte b = readBuf.getByte(readBuf.position() - 1);
@@ -29,7 +28,7 @@ public class EchoSession extends Session {
 				writeBuf.writeBytes(readBuf.readBytes(0, len));
 				writeBuf.position(0);
 				writeBuf.limit(len);
-				setNextState(IOState.WRITE);
+				setNextState(IoState.WRITE);
 				return;
 			}
 		}
@@ -37,7 +36,7 @@ public class EchoSession extends Session {
 	}
 
 	@Override
-	public void writeCompleted(IOBuffer readBuf, IOBuffer writeBuf)
+	public void writeCompleted(IoBuffer readBuf, IoBuffer writeBuf)
 			throws Exception {
 		logger.debug("writeCompleted");
 		/** Session未关闭，则继续读取IO,同时position复位 */
@@ -46,7 +45,7 @@ public class EchoSession extends Session {
 	}
 
 	@Override
-	public void open(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
+	public void open(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
 		logger.debug("Open session");
 		remainToRead(BUF_SIZE);
 	}
@@ -61,7 +60,7 @@ public class EchoSession extends Session {
 	}
 
 	@Override
-	public void writing(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
+	public void writing(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
 		logger.debug(this.toString() + " writing...");
 
 	}

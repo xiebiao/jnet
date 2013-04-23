@@ -16,8 +16,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnet.utils.IOBuffer;
-import com.github.jnet.utils.IOUtils;
+import com.github.jnet.utils.IoBuffer;
+import com.github.jnet.utils.IoUtils;
 
 public class Worker implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(Worker.class);
@@ -136,7 +136,7 @@ public class Worker implements Runnable {
 	 * @throws ClosedChannelException
 	 */
 	private void updateSession(Session session) throws ClosedChannelException {
-		if (session.getCurrentState() == IOState.READ
+		if (session.getCurrentState() == Session.IoState.READ
 				&& session.readBuffer.remaining() > 0) {
 			if (this.config.getReadTimeout() > 0) {
 				if (session.getNextTimeout() > System.currentTimeMillis()) {
@@ -150,7 +150,7 @@ public class Worker implements Runnable {
 			session.getSocket().register(selector, SelectionKey.OP_READ,
 					session);
 
-		} else if (session.getCurrentState() == IOState.WRITE
+		} else if (session.getCurrentState() == Session.IoState.WRITE
 				&& session.writeBuffer.remaining() > 0) {
 			if (this.config.getWriteTimeout() > 0) {
 				if (session.getNextTimeout() > System.currentTimeMillis()) {
@@ -187,7 +187,7 @@ public class Worker implements Runnable {
 		while (sessionIter.hasNext()) {
 			Session session = sessionIter.next();
 			if (session.getNextTimeout() <= timeout) {
-				session.setCurrentEvent(SessionEvent.TIMEOUT);
+				session.setCurrentEvent(Session.Event.TIMEOUT);
 				eventSessionList.add(session);
 				sessionIter.remove();
 			} else {
@@ -205,11 +205,11 @@ public class Worker implements Runnable {
 		while (eventIter.hasNext()) {
 			Session session = eventIter.next();
 			try {
-				if (session.getCurrentEvent() == SessionEvent.TIMEOUT) {
+				if (session.getCurrentEvent() == Session.Event.TIMEOUT) {
 					timeoutEvent(session);
-				} else if (session.getCurrentState() == IOState.READ) {
+				} else if (session.getCurrentState() == Session.IoState.READ) {
 					readEvent(session);
-				} else if (session.getCurrentState() == IOState.WRITE) {
+				} else if (session.getCurrentState() == Session.IoState.WRITE) {
 					writeEvent(session);
 				}
 			} catch (Exception e) {
@@ -234,17 +234,17 @@ public class Worker implements Runnable {
 		}
 	}
 
-	private void ioEvent(Session session, IOBuffer buf) throws Exception {
+	private void ioEvent(Session session, IoBuffer buf) throws Exception {
 		while (buf.remaining() > 0) {
 			int len = 0;
-			IOState curState = session.getCurrentState();
+			Session.IoState curState = session.getCurrentState();
 			/** ------------------------------- 处理IO */
 			switch (curState) {
 			case READ:
-				len = IOUtils.read(session, session.getSocket(), buf);
+				len = IoUtils.read(session, session.getSocket(), buf);
 				break;
 			case WRITE:
-				len = IOUtils.write(session, session.getSocket(), buf);
+				len = IoUtils.write(session, session.getSocket(), buf);
 				break;
 			case CLOSE:
 				break;

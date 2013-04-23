@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jnet.Session;
 
-public final class IOUtils {
-	private static Logger logger = LoggerFactory.getLogger(IOUtils.class);
+public final class IoUtils {
+	private static Logger logger = LoggerFactory.getLogger(IoUtils.class);
 
 	/**
 	 * 网络读操作
@@ -19,7 +19,7 @@ public final class IOUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static int read(SocketChannel socket, IOBuffer buf)
+	public static int read(SocketChannel socket, IoBuffer buf)
 			throws IOException {
 		int len = socket.read(buf.getBuffer());
 		if (len < 0) {
@@ -28,7 +28,7 @@ public final class IOUtils {
 		return len;
 	}
 
-	public static int read(Session session, SocketChannel socket, IOBuffer buf)
+	public static int read(Session session, SocketChannel socket, IoBuffer buf)
 			throws IOException {
 //		logger.debug("Session[" + session.getId() + "] is reading \n"
 //				+ buf.toString());
@@ -43,7 +43,7 @@ public final class IOUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static int write(SocketChannel socket, IOBuffer buf)
+	public static int write(SocketChannel socket, IoBuffer buf)
 			throws IOException {
 		int len = socket.write(buf.getBuffer());
 		if (len < 0) {
@@ -52,7 +52,7 @@ public final class IOUtils {
 		return len;
 	}
 
-	public static int write(Session session, SocketChannel socket, IOBuffer buf)
+	public static int write(Session session, SocketChannel socket, IoBuffer buf)
 			throws IOException {
 		logger.debug("Session[" + session.getId() + "] is writing \n"
 				+ buf.toString());

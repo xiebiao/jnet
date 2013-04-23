@@ -3,9 +3,8 @@ package com.github.jnet.protocol.http11;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnet.IOState;
 import com.github.jnet.Session;
-import com.github.jnet.utils.IOBuffer;
+import com.github.jnet.utils.IoBuffer;
 
 public class HttpSession extends Session {
 	private static final Logger logger = LoggerFactory
@@ -97,13 +96,13 @@ public class HttpSession extends Session {
 	}
 
 	@Override
-	public void readCompleted(IOBuffer readBuf, IOBuffer writeBuf)
+	public void readCompleted(IoBuffer readBuf, IoBuffer writeBuf)
 			throws Exception {
-		this.setNextState(IOState.CLOSE);
+		this.setNextState(IoState.CLOSE);
 	}
 
 	@Override
-	public void reading(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
+	public void reading(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
 		logger.info("Poccess the Session[" + this.getId() + "] ");
 		logger.debug(readBuf.toString());
 		if (currentState == STATE_READ_HEAD) {
@@ -126,14 +125,14 @@ public class HttpSession extends Session {
 			String body = readBuf.getString(bodyStartPos, bodyLen, "ASCII");
 			parseBody(body);
 			handle(readBuf, writeBuf);
-			setNextState(IOState.WRITE);
+			setNextState(IoState.WRITE);
 			return;
 		}
 		/** 读取剩下buffer */
 		remainToRead(BUF_SIZE);
 	}
 
-	public void handle(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
+	public void handle(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
 		Servlet action = ServletFactory.get(request);
 		if (action == null) {
 			throw new Exception("action not found");
@@ -149,13 +148,13 @@ public class HttpSession extends Session {
 	}
 
 	@Override
-	public void writeCompleted(IOBuffer readBuf, IOBuffer writeBuf)
+	public void writeCompleted(IoBuffer readBuf, IoBuffer writeBuf)
 			throws Exception {
-		setNextState(IOState.CLOSE);
+		setNextState(IoState.CLOSE);
 	}
 
 	@Override
-	public void open(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
+	public void open(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
 		remainToRead(BUF_SIZE);
 	}
 
@@ -164,7 +163,7 @@ public class HttpSession extends Session {
 	}
 
 	@Override
-	public void writing(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
+	public void writing(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
 		logger.info(this.toString() + " writing...");
 
 	}

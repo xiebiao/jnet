@@ -7,7 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnet.utils.IOBuffer;
+import com.github.jnet.utils.IoBuffer;
 
 /**
  * <p>
@@ -59,7 +59,7 @@ public final class SessionManager {
 		synchronized (lock) {
 			for (int i = 0; i < sessionList.size(); i++) {
 				Session session = sessionList.get(i);
-				session.setNextState(IOState.CLOSE);
+				session.setNextState(Session.IoState.CLOSE);
 				session = null;
 			}
 			sessionList = null;
@@ -75,10 +75,10 @@ public final class SessionManager {
 			Object obj = clazz.newInstance();
 			Session session = (Session) obj;
 			session.setId(i);
-			session.setCurrentEvent(SessionEvent.READ);
+			session.setCurrentEvent(Session.Event.READ);
 			session.setInuse(false);
-			session.setReadBuffer(new IOBuffer());
-			session.setWriteBuffer(new IOBuffer());
+			session.setReadBuffer(new IoBuffer());
+			session.setWriteBuffer(new IoBuffer());
 			sessionList.add(session);
 		}
 	}

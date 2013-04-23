@@ -5,7 +5,7 @@ import java.nio.channels.SocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnet.utils.IOBuffer;
+import com.github.jnet.utils.IoBuffer;
 
 public abstract class Session {
 	private static final Logger logger = LoggerFactory.getLogger(Session.class);
@@ -18,18 +18,28 @@ public abstract class Session {
 	 * 下一次超时时间点（时间戳）
 	 */
 	protected long nextTimeout = 0;
+
+	public enum IoState {
+		READ, WRITE, CLOSE
+	}
+
 	/**
 	 * 当前IO状态
 	 */
-	protected IOState currentState;
+	protected IoState currentState;
+
+	public enum Event {
+		READ, WRITE, TIMEOUT
+	}
+
 	/**
 	 * 当前会话事件
 	 */
-	protected SessionEvent currentEvent = SessionEvent.READ;
+	protected Event currentEvent = Event.READ;
 
-	protected IOBuffer readBuffer = null;
+	protected IoBuffer readBuffer = null;
 
-	protected IOBuffer writeBuffer = null;
+	protected IoBuffer writeBuffer = null;
 
 	protected SocketChannel socket = null;
 
@@ -39,19 +49,19 @@ public abstract class Session {
 		id = 0;
 	}
 
-	public abstract void open(IOBuffer readBuf, IOBuffer writeBuf)
+	public abstract void open(IoBuffer readBuf, IoBuffer writeBuf)
 			throws Exception;
 
-	public abstract void readCompleted(IOBuffer readBuf, IOBuffer writeBuf)
+	public abstract void readCompleted(IoBuffer readBuf, IoBuffer writeBuf)
 			throws Exception;
 
-	public abstract void reading(IOBuffer readBuf, IOBuffer writeBuf)
+	public abstract void reading(IoBuffer readBuf, IoBuffer writeBuf)
 			throws Exception;
 
-	public abstract void writeCompleted(IOBuffer readBuf, IOBuffer writeBuf)
+	public abstract void writeCompleted(IoBuffer readBuf, IoBuffer writeBuf)
 			throws Exception;
 
-	public abstract void writing(IOBuffer readBuf, IOBuffer writeBuf)
+	public abstract void writing(IoBuffer readBuf, IoBuffer writeBuf)
 			throws Exception;
 
 	public abstract void close();
@@ -59,10 +69,10 @@ public abstract class Session {
 	public void timeout() throws Exception {
 		logger.debug("The Session " + this.getId()
 				+ " is timeout, will be closed.");
-		setNextState(IOState.CLOSE);
+		setNextState(IoState.CLOSE);
 	}
 
-	public void setNextState(IOState state) {
+	public void setNextState(IoState state) {
 		this.currentState = state;
 		switch (state) {
 		case WRITE:
@@ -95,12 +105,12 @@ public abstract class Session {
 
 	public void remainToRead(int remain) {
 		readBuffer.limit(readBuffer.position() + remain);
-		setNextState(IOState.READ);
+		setNextState(IoState.READ);
 	}
 
 	public void remainToWrite(int remain) {
 		writeBuffer.limit(writeBuffer.position() + remain);
-		setNextState(IOState.WRITE);
+		setNextState(IoState.WRITE);
 	}
 
 	public int getId() {
@@ -111,15 +121,15 @@ public abstract class Session {
 		this.id = id;
 	}
 
-	public SessionEvent getCurrentEvent() {
+	public Event getCurrentEvent() {
 		return currentEvent;
 	}
 
-	public void setCurrentEvent(SessionEvent event) {
+	public void setCurrentEvent(Event event) {
 		this.currentEvent = event;
 	}
 
-	public void setReadBuffer(IOBuffer readBuf) {
+	public void setReadBuffer(IoBuffer readBuf) {
 		this.readBuffer = readBuf;
 	}
 
@@ -139,7 +149,7 @@ public abstract class Session {
 		this.inuse = inuse;
 	}
 
-	public void setWriteBuffer(IOBuffer writeBuffer) {
+	public void setWriteBuffer(IoBuffer writeBuffer) {
 		this.writeBuffer = writeBuffer;
 	}
 
@@ -151,7 +161,7 @@ public abstract class Session {
 		this.nextTimeout = nextTimeout;
 	}
 
-	public IOState getCurrentState() {
+	public IoState getCurrentState() {
 		return currentState;
 	}
 
