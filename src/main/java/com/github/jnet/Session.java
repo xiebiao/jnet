@@ -43,7 +43,7 @@ public abstract class Session {
 
 	protected SocketChannel socket = null;
 
-	private boolean inuse = false;
+	private boolean idle = false;
 
 	public Session() {
 		id = 0;
@@ -89,16 +89,16 @@ public abstract class Session {
 
 		switch (state) {
 		case READ:
-			logger.info("Set the Session[" + this.getId() + "]'s state to"
-					+ " STATE_READ.");
+			logger.info("Set the Session[" + this.getId() + "] : currentState = "
+					+ "STATE_READ.");
 			break;
 		case WRITE:
-			logger.info("Set the Session[" + this.getId() + "]'s state to"
-					+ " STATE_WRITE.");
+			logger.info("Set the Session[" + this.getId() + "] : currentState = "
+					+ "STATE_WRITE.");
 			break;
 		case CLOSE:
-			logger.info("Set the Session[" + this.getId() + "]'s state to"
-					+ " STATE_CLOSE.");
+			logger.info("Set Session[" + this.getId() + "] : currentState = "
+					+ "STATE_CLOSE.");
 			break;
 		}
 	}
@@ -141,12 +141,12 @@ public abstract class Session {
 		this.socket = socket;
 	}
 
-	public boolean isInuse() {
-		return inuse;
+	public boolean isIdle() {
+		return idle;
 	}
 
-	public void setInuse(boolean inuse) {
-		this.inuse = inuse;
+	public void setIdle(boolean idle) {
+		this.idle = idle;
 	}
 
 	public void setWriteBuffer(IoBuffer writeBuffer) {

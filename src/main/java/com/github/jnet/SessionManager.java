@@ -38,8 +38,8 @@ public final class SessionManager {
 			Iterator<Session> sessionIter = sessionList.iterator();
 			while (sessionIter.hasNext()) {
 				Session session = sessionIter.next();
-				if (!session.isInuse()) {
-					session.setInuse(true);
+				if (!session.isIdle()) {
+					session.setIdle(true);
 					logger.info("Get Session[" + session.getId()
 							+ "] from pool.");
 					return session;
@@ -50,10 +50,9 @@ public final class SessionManager {
 	}
 
 	public void close(Session session) {
-		logger.info("Session[" + session.getId()
-				+ "] is closed,put it back to pool.");
 		synchronized (lock) {
-			session.setInuse(false);
+			session.setIdle(false);
+			logger.info("Session[" + session.getId() + "] " + "is idle.");
 		}
 	}
 
@@ -64,7 +63,7 @@ public final class SessionManager {
 				session.setNextState(Session.IoState.CLOSE);
 				try {
 					SocketChannel s = session.getSocket();
-					if (s!=null&&s.isOpen()) {
+					if (s != null && s.isOpen()) {
 						s.close();
 					}
 				} catch (IOException e) {
@@ -87,7 +86,7 @@ public final class SessionManager {
 			Session session = (Session) obj;
 			session.setId(i);
 			session.setCurrentEvent(Session.Event.READ);
-			session.setInuse(false);
+			session.setIdle(false);
 			session.setReadBuffer(new IoBuffer());
 			session.setWriteBuffer(new IoBuffer());
 			sessionList.add(session);
