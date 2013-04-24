@@ -26,17 +26,15 @@ public abstract class Server<T extends Session> {
 	private Configuration config;
 	private Worker[] workers;
 	private Selector selector;
-	private ServerSocketChannel socket;
+	private ServerSocketChannel serverSocket;
 	private int nextWorkerIndex = 0;
 	private Class<T> sessionHandler;
 	private String name;
 	private SessionManager sessionManager = SessionManager.getInstance();
+	private ExecutorService executor;
 
-	public Server(Configuration config, Class<T> sessionHandler) {
-		this.config = config;
-		this.sessionHandler = sessionHandler;
-		workers = new Worker[config.getThreadNumber()];
-		name = "Server";
+	public Server() {
+
 	}
 
 	public void setName(String name) {
@@ -53,26 +51,23 @@ public abstract class Server<T extends Session> {
 	 * @throws Exception
 	 */
 	public void start() throws Exception {
-		sessionManager.initialize(this.sessionHandler, config.getMaxConnection());
-		try {
-			init();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
-
-		ExecutorService pool = Executors.newFixedThreadPool(config
-				.getThreadNumber());
+		sessionManager.initialize(this.sessionHandler,
+				config.getMaxConnection());
+		executor = Executors.newFixedThreadPool(config.getThreadNumber());
 		for (int i = 0; i < workers.length; i++) {
 			workers[i] = new Worker(sessionManager, this.config);
-			pool.execute(workers[i]);
+			executor.execute(workers[i]);
 		}
-		logger.info("Started: " + this.config.toString());
+		logger.info("Server started:" + this.config.toString());
 		SocketChannel csocket = null;
 		while (true) {
+			if (serverSocket == null) {
+				logger.warn("ServerSocket is not open.");
+				break;
+			}
 			selector.select();
 			try {
-				csocket = socket.accept();
+				csocket = serverSocket.accept();
 				csocket.configureBlocking(false);
 				Session session = sessionManager.getSession();
 				if (session == null) {
@@ -87,21 +82,39 @@ public abstract class Server<T extends Session> {
 				if (csocket != null && csocket.isConnected()) {
 					csocket.close();
 				}
-				logger.warn("", e);
+				logger.error("Server running exception:", e);
 			}
 		}
-
 	}
 
-	public void init() throws IOException {
+	public void init(Configuration config, Class<T> sessionHandler)
+			throws IOException {
+		this.config = config;
+		this.sessionHandler = sessionHandler;
+		workers = new Worker[config.getThreadNumber()];
+		name = "Server";
+		//
 		selector = Selector.open();
-		socket = ServerSocketChannel.open();
-		socket.socket().setReuseAddress(true);
-		socket.configureBlocking(false);
-		socket.socket().bind(
+		serverSocket = ServerSocketChannel.open();
+		serverSocket.socket().setReuseAddress(true);
+		serverSocket.configureBlocking(false);
+		serverSocket.socket().bind(
 				new InetSocketAddress(InetAddress.getByName(config.getIp()),
 						config.getPort()));
-		socket.register(selector, SelectionKey.OP_ACCEPT);
+		serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+	}
+
+	public void stop() throws Exception {
+		if (null != serverSocket) {
+			serverSocket.close();
+			serverSocket = null;
+		}
+		this.sessionManager.destroy();
+		if (null != this.executor) {
+			this.executor.shutdown();
+			this.executor = null;
+		}
+
 	}
 
 	/**

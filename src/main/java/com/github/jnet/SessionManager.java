@@ -1,5 +1,7 @@
 package com.github.jnet;
 
+import java.io.IOException;
+import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -60,16 +62,25 @@ public final class SessionManager {
 			for (int i = 0; i < sessionList.size(); i++) {
 				Session session = sessionList.get(i);
 				session.setNextState(Session.IoState.CLOSE);
+				try {
+					SocketChannel s = session.getSocket();
+					if (s!=null&&s.isOpen()) {
+						s.close();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				session = null;
 			}
 			sessionList = null;
+			logger.debug("Session pool is destroyed.");
 		}
 	}
 
 	public <T> void initialize(Class<T> clazz, int capacity) throws Exception {
 		if (sessionList.size() > 0) {
 			throw new java.lang.IllegalStateException(
-					"Session pool has initialized");
+					"Session pool has initialized.");
 		}
 		for (int i = 0; i < capacity; i++) {
 			Object obj = clazz.newInstance();
