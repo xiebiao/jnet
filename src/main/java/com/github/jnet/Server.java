@@ -58,7 +58,7 @@ public abstract class Server<T extends Session> {
 			workers[i] = new Worker(sessionManager, this.config);
 			executor.execute(workers[i]);
 		}
-		logger.info("Server started:" + this.config.toString());
+		logger.info("Server started : " + this.config.toString());
 		SocketChannel csocket = null;
 		while (true) {
 			if (serverSocket == null) {
