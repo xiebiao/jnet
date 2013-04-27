@@ -10,6 +10,8 @@ public class EchoServer extends Server<EchoSession> {
 	public static void main(String[] args) throws Exception {
 		try {
 			Configuration config = new Configuration();
+			config.setReadTimeout(100);
+			config.setWriteTimeout(100);
 			EchoServer server = new EchoServer();
 			server.init(config, EchoSession.class);
 			server.start();
