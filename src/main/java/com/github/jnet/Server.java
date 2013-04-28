@@ -22,27 +22,18 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class Server<T extends Session> {
 	private static final Logger logger = LoggerFactory.getLogger(Server.class);
-
+	protected String name;
 	private Configuration config;
 	private Worker[] workers;
 	private Selector selector;
 	private ServerSocketChannel serverSocket;
 	private int nextWorkerIndex = 0;
 	private Class<T> sessionHandler;
-	private String name;
 	private SessionManager sessionManager = SessionManager.getInstance();
 	private ExecutorService executor;
 
-	public Server() {
-
-	}
-
-	public void setName(String name) {
+	public Server(String name) {
 		this.name = name;
-	}
-
-	public String getName() {
-		return this.name;
 	}
 
 	/**
@@ -59,7 +50,7 @@ public abstract class Server<T extends Session> {
 			workers[i] = new Worker(sessionManager, this.config);
 			executor.execute(workers[i]);
 		}
-		logger.info("Server started : " + this.config.toString());
+		logger.info(name + " started : " + this.config.toString());
 		SocketChannel csocket = null;
 		while (true) {
 			if (serverSocket == null) {
@@ -83,7 +74,7 @@ public abstract class Server<T extends Session> {
 				if (csocket != null && csocket.isConnected()) {
 					csocket.close();
 				}
-				logger.error("Server running exception:", e);
+				logger.error(name + " running exception:", e);
 			}
 		}
 	}
@@ -93,8 +84,6 @@ public abstract class Server<T extends Session> {
 		this.config = config;
 		this.sessionHandler = sessionHandler;
 		workers = new Worker[config.getThreadNumber()];
-		name = "Server";
-		//
 		selector = Selector.open();
 		serverSocket = ServerSocketChannel.open();
 		serverSocket.socket().setReuseAddress(true);

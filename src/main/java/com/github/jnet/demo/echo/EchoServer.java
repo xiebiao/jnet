@@ -4,7 +4,8 @@ import com.github.jnet.Configuration;
 import com.github.jnet.Server;
 
 public class EchoServer extends Server<EchoSession> {
-	public EchoServer() {
+	public EchoServer(String name) {
+		super(name);
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -12,7 +13,7 @@ public class EchoServer extends Server<EchoSession> {
 			Configuration config = new Configuration();
 			config.setReadTimeout(100);
 			config.setWriteTimeout(100);
-			EchoServer server = new EchoServer();
+			EchoServer server = new EchoServer("Echo Server");
 			server.init(config, EchoSession.class);
 			server.start();
 		} catch (Exception e) {

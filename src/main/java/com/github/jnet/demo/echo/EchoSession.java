@@ -19,7 +19,6 @@ public class EchoSession extends Session {
 
 	@Override
 	public void reading(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
-		logger.debug(this.toString() + " reading...");
 		if (readBuf.position() > 1) {
 			byte b = readBuf.getByte(readBuf.position() - 1);
 			if (b == (byte) '\n') {
@@ -38,7 +37,6 @@ public class EchoSession extends Session {
 	@Override
 	public void writeCompleted(IoBuffer readBuf, IoBuffer writeBuf)
 			throws Exception {
-		logger.debug("writeCompleted");
 		/** Session未关闭，则继续读取IO,同时position复位 */
 		readBuf.position(0);
 		remainToRead(BUF_SIZE);
@@ -61,7 +59,6 @@ public class EchoSession extends Session {
 
 	@Override
 	public void writing(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
-		logger.debug(this.toString() + " writing...");
 
 	}
 
