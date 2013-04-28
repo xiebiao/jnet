@@ -53,7 +53,8 @@ public abstract class Server<T extends Session> {
 	public void start() throws Exception {
 		sessionManager.initialize(this.sessionHandler,
 				config.getMaxConnection());
-		executor = Executors.newFixedThreadPool(config.getThreadNumber());
+		executor = Executors.newFixedThreadPool(config.getThreadNumber(),
+				new JnetThreadFactory());
 		for (int i = 0; i < workers.length; i++) {
 			workers[i] = new Worker(sessionManager, this.config);
 			executor.execute(workers[i]);
