@@ -2,4 +2,4 @@
 
 CLASSPATH=$CLASSPATH:../libs/*
 
-java -classpath $CLASSPATH com.github.jnet.demo.httpserver.HttpServer
+java -classpath $CLASSPATH com.github.jnet.demo.httpd.HttpServer

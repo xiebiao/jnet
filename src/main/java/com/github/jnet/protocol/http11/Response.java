@@ -47,13 +47,13 @@ public class Response {
 		StringBuilder sb = new StringBuilder();
 		switch (this.statusCode) {
 		case 200:
-			sb.append("HTTP/1.1 200 OK\r\n");
+			sb.append(HttpVersion.VERSION + " 200 OK\r\n");
 			break;
 		case 302:
-			sb.append("HTTP/1.1 302 Moved \r\n");		
+			sb.append(HttpVersion.VERSION + " 302 Moved \r\n");
 			break;
 		case 500:
-			sb.append("HTTP/1.1 500 INTERNAL SERVER ERROR\r\n");
+			sb.append(HttpVersion.VERSION + " 500 INTERNAL SERVER ERROR\r\n");
 			break;
 		}
 
