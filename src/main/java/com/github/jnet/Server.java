@@ -29,7 +29,7 @@ public abstract class Server<T extends Session> {
 	private ServerSocketChannel serverSocket;
 	private int nextWorkerIndex = 0;
 	private Class<T> sessionHandler;
-	private SessionManager sessionManager = SessionManager.getInstance();
+	private SessionManager sessionManager = new SessionManager();
 	private ExecutorService executor;
 
 	public Server(String name) {

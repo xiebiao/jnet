@@ -12,9 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.github.jnet.utils.IoBuffer;
 
 /**
- * <p>
  * 会话管理
- * </p>
  * 
  * @author xiebiao
  * 
@@ -22,15 +20,10 @@ import com.github.jnet.utils.IoBuffer;
 public final class SessionManager {
 	private static final Logger logger = LoggerFactory
 			.getLogger(SessionManager.class);
-	private static List<Session> sessionList = new ArrayList<Session>();
+	private List<Session> sessionList = new ArrayList<Session>();
 	private volatile Boolean lock = false;
-	private static SessionManager sessionManager = new SessionManager();
 
-	private SessionManager() {
-	}
-
-	public static SessionManager getInstance() {
-		return sessionManager;
+	public SessionManager() {
 	}
 
 	public Session getSession() {
