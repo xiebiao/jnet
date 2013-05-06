@@ -20,16 +20,17 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class Server<T extends Session> {
 
-	private static final Logger logger = LoggerFactory.getLogger(Server.class);
-	protected String name;
-	private Configuration config;
-	private Worker[] workers;
-	private Selector selector;
-	private ServerSocketChannel serverSocket;
-	private int nextWorkerIndex = 0;
-	private Class<T> sessionHandler;
-	private SessionManager sessionManager = new SessionManager();
-	private ExecutorService executor;
+    private static final Logger logger          = LoggerFactory.getLogger(Server.class);
+    protected String            name;
+    private Configuration       config;
+    private Worker[]            workers;
+    private Selector            selector;
+    private ServerSocketChannel serverSocket;
+    private int                 nextWorkerIndex = 0;
+    private Class<T>            sessionHandler;
+    private SessionManager      sessionManager  = new SessionManager();
+    private ExecutorService     executor;
+    private Object              _lock           = new Object();
 
     public Server(String name) {
         this.name = name;
@@ -40,67 +41,72 @@ public abstract class Server<T extends Session> {
      * @throws Exception
      */
     public void start() throws Exception {
-        if (this.serverSocket == null) {
-            throw new Exception("Server must initialize before start.");
-        }
-        sessionManager.initialize(this.sessionHandler, config.getMaxConnection());
-        executor = Executors.newFixedThreadPool(config.getThreadNumber(), new JnetThreadFactory());
-        for (int i = 0; i < workers.length; i++) {
-            workers[i] = new Worker(sessionManager, this.config);
-            executor.execute(workers[i]);
-        }
-        logger.info(name + " started : " + this.config.toString());
-        SocketChannel csocket = null;
-        while (true) {
-            if (serverSocket == null) {
-                logger.warn("ServerSocket is not open.");
-                break;
+        synchronized (_lock) {
+            if (this.serverSocket == null) {
+                throw new Exception("Server must initialize before start.");
             }
-            selector.select();
-            try {
-                csocket = serverSocket.accept();
-                csocket.configureBlocking(false);
-                Session session = sessionManager.getSession();
-                if (session == null) {
-                    logger.error("Too many connection.");
-                    csocket.close();
-                    continue;
-                } else {
-                    session.setSocket(csocket);
-                    handleNewSession(session);
+            sessionManager.initialize(this.sessionHandler, config.getMaxConnection());
+            executor = Executors.newFixedThreadPool(config.getThreadNumber(), new JnetThreadFactory());
+            for (int i = 0; i < workers.length; i++) {
+                workers[i] = new Worker(sessionManager, this.config);
+                executor.execute(workers[i]);
+            }
+            logger.info(name + " started : " + this.config.toString());
+            SocketChannel csocket = null;
+            while (true) {
+                if (serverSocket == null) {
+                    logger.warn("ServerSocket is not open.");
+                    break;
                 }
-            } catch (IOException e) {
-                if (csocket != null && csocket.isConnected()) {
-                    csocket.close();
+                selector.select();
+                try {
+                    csocket = serverSocket.accept();
+                    csocket.configureBlocking(false);
+                    Session session = sessionManager.getSession();
+                    if (session == null) {
+                        logger.error("Too many connection.");
+                        csocket.close();
+                        continue;
+                    } else {
+                        session.setSocket(csocket);
+                        handleNewSession(session);
+                    }
+                } catch (IOException e) {
+                    if (csocket != null && csocket.isConnected()) {
+                        csocket.close();
+                    }
+                    logger.error(name + " running exception:", e);
                 }
-                logger.error(name + " running exception:", e);
             }
         }
     }
 
     public void init(Configuration config, Class<T> sessionHandler) throws IOException {
-        this.config = config;
-        this.sessionHandler = sessionHandler;
-        workers = new Worker[config.getThreadNumber()];
-        selector = Selector.open();
-        serverSocket = ServerSocketChannel.open();
-        serverSocket.socket().setReuseAddress(true);
-        serverSocket.configureBlocking(false);
-        serverSocket.socket().bind(new InetSocketAddress(InetAddress.getByName(config.getIp()), config.getPort()));
-        serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+        synchronized (_lock) {
+            this.config = config;
+            this.sessionHandler = sessionHandler;
+            workers = new Worker[config.getThreadNumber()];
+            selector = Selector.open();
+            serverSocket = ServerSocketChannel.open();
+            serverSocket.socket().setReuseAddress(true);
+            serverSocket.configureBlocking(false);
+            serverSocket.socket().bind(new InetSocketAddress(InetAddress.getByName(config.getIp()), config.getPort()));
+            serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+        }
     }
 
     public void stop() throws Exception {
-        if (null != serverSocket) {
-            serverSocket.close();
-            serverSocket = null;
+        synchronized (_lock) {
+            if (null != serverSocket) {
+                serverSocket.close();
+                serverSocket = null;
+            }
+            this.sessionManager.destroy();
+            if (null != this.executor) {
+                this.executor.shutdown();
+                this.executor = null;
+            }
         }
-        this.sessionManager.destroy();
-        if (null != this.executor) {
-            this.executor.shutdown();
-            this.executor = null;
-        }
-
     }
 
     /**
