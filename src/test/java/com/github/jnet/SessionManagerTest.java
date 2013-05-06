@@ -6,7 +6,7 @@ import junit.framework.TestCase;
 import com.github.jnet.protocol.http11.HttpSession;
 
 public class SessionManagerTest extends TestCase {
-	private SessionManager sm = SessionManager.getInstance();
+	private SessionManager sm = new SessionManager();
 
 	public void setUp() {
 		try {

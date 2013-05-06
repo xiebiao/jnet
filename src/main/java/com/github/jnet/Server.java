@@ -20,16 +20,16 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class Server<T extends Session> {
 
-    private static final Logger logger          = LoggerFactory.getLogger(Server.class);
-    protected String            name;
-    private Configuration       config;
-    private Worker[]            workers;
-    private Selector            selector;
-    private ServerSocketChannel serverSocket;
-    private int                 nextWorkerIndex = 0;
-    private Class<T>            sessionHandler;
-    private SessionManager      sessionManager  = SessionManager.getInstance();
-    private ExecutorService     executor;
+	private static final Logger logger = LoggerFactory.getLogger(Server.class);
+	protected String name;
+	private Configuration config;
+	private Worker[] workers;
+	private Selector selector;
+	private ServerSocketChannel serverSocket;
+	private int nextWorkerIndex = 0;
+	private Class<T> sessionHandler;
+	private SessionManager sessionManager = new SessionManager();
+	private ExecutorService executor;
 
     public Server(String name) {
         this.name = name;

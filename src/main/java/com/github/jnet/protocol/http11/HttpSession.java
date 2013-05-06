@@ -41,6 +41,9 @@ public class HttpSession extends Session {
 		if (row.length != 3) {
 			throw new Exception("invalid header");
 		}
+		if (!row[2].toUpperCase().equals(HttpVersion.VERSION)) {
+			throw new Exception("Only supported " + HttpVersion.VERSION);
+		}
 		if (!row[0].equals("GET") && !row[0].equals("POST")) {
 			throw new Exception("invalid header");
 		}

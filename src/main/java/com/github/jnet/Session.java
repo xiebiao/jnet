@@ -15,7 +15,7 @@ public abstract class Session {
 	protected int id = 0;
 
 	/**
-	 * 下一次超时时间点（时间戳）
+	 * 下一次超时时间
 	 */
 	protected long nextTimeout = 0;
 
@@ -49,23 +49,7 @@ public abstract class Session {
 		id = 0;
 	}
 
-	public abstract void open(IoBuffer readBuf, IoBuffer writeBuf)
-			throws Exception;
-
-	public abstract void readCompleted(IoBuffer readBuf, IoBuffer writeBuf)
-			throws Exception;
-
-	public abstract void reading(IoBuffer readBuf, IoBuffer writeBuf)
-			throws Exception;
-
-	public abstract void writeCompleted(IoBuffer readBuf, IoBuffer writeBuf)
-			throws Exception;
-
-	public abstract void writing(IoBuffer readBuf, IoBuffer writeBuf)
-			throws Exception;
-
-	public abstract void close();
-
+	/*------------------------------------------------------------------ change state */
 	public void timeout() throws Exception {
 		logger.debug("The Session " + this.getId()
 				+ " is timeout, will be closed.");
@@ -86,15 +70,14 @@ public abstract class Session {
 		case CLOSE:
 			this.close();
 		}
-
 		switch (state) {
 		case READ:
-			logger.info("Set the Session[" + this.getId() + "] : currentState = "
-					+ "STATE_READ.");
+			logger.info("Set the Session[" + this.getId()
+					+ "] : currentState = " + "STATE_READ.");
 			break;
 		case WRITE:
-			logger.info("Set the Session[" + this.getId() + "] : currentState = "
-					+ "STATE_WRITE.");
+			logger.info("Set the Session[" + this.getId()
+					+ "] : currentState = " + "STATE_WRITE.");
 			break;
 		case CLOSE:
 			logger.info("Set Session[" + this.getId() + "] : currentState = "
@@ -113,6 +96,25 @@ public abstract class Session {
 		setNextState(IoState.WRITE);
 	}
 
+	/*------------------------------------------------------------------ abstract methods */
+	public abstract void open(IoBuffer readBuf, IoBuffer writeBuf)
+			throws Exception;
+
+	public abstract void readCompleted(IoBuffer readBuf, IoBuffer writeBuf)
+			throws Exception;
+
+	public abstract void reading(IoBuffer readBuf, IoBuffer writeBuf)
+			throws Exception;
+
+	public abstract void writeCompleted(IoBuffer readBuf, IoBuffer writeBuf)
+			throws Exception;
+
+	public abstract void writing(IoBuffer readBuf, IoBuffer writeBuf)
+			throws Exception;
+
+	public abstract void close();
+
+	/*------------------------------------------------------------------ getter/setter */
 	public int getId() {
 		return id;
 	}

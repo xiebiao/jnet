@@ -27,7 +27,7 @@ public class Ab implements Runnable {
 			StringBuffer sb = new StringBuffer();
 			while (true) {
 				byte[] b = con.read(1);
-				if(b[0]=='\n')break;
+				//if(b[0]=='\n')break;
 				if (b != null && b.length == 1) {
 					sb.append(new String(b, "UTF-8"));
 					
