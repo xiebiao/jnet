@@ -81,14 +81,15 @@ public abstract class Server<T extends Session> {
         }
     }
 
-    public void init(Configuration config, Class<T> sessionHandler) throws IOException {
+    public void init(Configuration config, Class<T> sessionHandler) throws Exception {
         synchronized (_lock) {
             this.config = config;
             this.sessionHandler = sessionHandler;
             workers = new Worker[config.getThreadNumber()];
             selector = Selector.open();
             serverSocket = ServerSocketChannel.open();
-            serverSocket.socket().setReuseAddress(true);
+            // serverSocket.socket().setReuseAddress(true);
+            //serverSocket.setOption(StandardSocketOptions.SO_REUSEADDR, false);
             serverSocket.configureBlocking(false);
             serverSocket.socket().bind(new InetSocketAddress(InetAddress.getByName(config.getIp()), config.getPort()));
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
