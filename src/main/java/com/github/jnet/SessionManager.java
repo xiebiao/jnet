@@ -69,7 +69,7 @@ public final class SessionManager {
 		}
 	}
 
-	public <T> void initialize(Class<T> clazz, int capacity) throws Exception {
+	public <E> void initialize(Class<E> clazz, int capacity) throws Exception {
 		if (sessionList.size() > 0) {
 			throw new java.lang.IllegalStateException(
 					"Session pool has initialized.");
