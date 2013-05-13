@@ -8,8 +8,8 @@ import com.github.jnet.protocol.http11.ServletFilter;
 
 public class HttpServer extends Server<HttpSession> {
 
-    public HttpServer(String name) {
-        super(name);
+    public HttpServer() {
+
     }
 
     public static void main(String[] args) throws Exception {
@@ -20,7 +20,8 @@ public class HttpServer extends Server<HttpSession> {
         config.setReadTimeout(100);
         config.setWriteTimeout(100);
 
-        HttpServer server = new HttpServer("Http Server");
+        HttpServer server = new HttpServer();
+        server.setName("Http");
         server.init(config, HttpSession.class);
         ServletFactory.filter = (ServletFilter) new Filter();
         server.start();
