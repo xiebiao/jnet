@@ -18,16 +18,16 @@ import com.github.jnet.utils.IoBuffer;
 public final class SessionManager {
 
     private static final Logger logger      = LoggerFactory.getLogger(SessionManager.class);
-    private List<AbstractSession>       sessionList = new ArrayList<AbstractSession>();
+    private List<Session>       sessionList = new ArrayList<Session>();
     private volatile Boolean    lock        = false;
 
     public SessionManager() {}
 
-    public AbstractSession getSession() {
+    public Session getSession() {
         synchronized (lock) {
-            Iterator<AbstractSession> sessionIter = sessionList.iterator();
+            Iterator<Session> sessionIter = sessionList.iterator();
             while (sessionIter.hasNext()) {
-                AbstractSession session = sessionIter.next();
+                Session session = sessionIter.next();
                 if (!session.isIdle()) {
                     session.setIdle(true);
                     logger.info("Get Session[" + session.getId() + "] from pool.");
@@ -38,7 +38,7 @@ public final class SessionManager {
         return null;
     }
 
-    public void close(AbstractSession session) {
+    public void close(Session session) {
         session.setIdle(false);
         logger.info("Session[" + session.getId() + "] " + "is idle.");
     }
@@ -46,8 +46,8 @@ public final class SessionManager {
     public void destroy() {
         synchronized (lock) {
             for (int i = 0; i < sessionList.size(); i++) {
-                AbstractSession session = sessionList.remove(i);
-                session.setNextState(AbstractSession.IoState.CLOSE);
+                Session session = sessionList.remove(i);
+                session.setNextState(Session.IoState.CLOSE);
                 try {
                     SocketChannel s = session.getSocket();
                     if (s != null && s.isOpen()) {
@@ -65,14 +65,14 @@ public final class SessionManager {
 
     public <E> void initialize(Class<E> clazz, int capacity) throws Exception {
         synchronized (lock) {
-//            if (sessionList != null && sessionList.size() > 0) {
-//                throw new java.lang.IllegalStateException("Session pool has initialized.");
-//            }
+            if (sessionList != null && sessionList.size() == capacity) {
+                throw new java.lang.IllegalStateException("Session pool has be initialized.");
+            }
             for (int i = 0; i < capacity; i++) {
                 Object obj = clazz.newInstance();
-                AbstractSession session = (AbstractSession) obj;
+                Session session = (Session) obj;
                 session.setId(i);
-                session.setCurrentEvent(AbstractSession.Event.READ);
+                session.setCurrentEvent(Session.Event.READ);
                 session.setIdle(false);
                 session.setReadBuffer(new IoBuffer());
                 session.setWriteBuffer(new IoBuffer());
