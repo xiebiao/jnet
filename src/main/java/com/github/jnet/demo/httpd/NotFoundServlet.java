@@ -1,8 +1,5 @@
 package com.github.jnet.demo.httpd;
 
-import com.github.jnet.protocol.http11.Request;
-import com.github.jnet.protocol.http11.Response;
-import com.github.jnet.protocol.http11.Servlet;
 
 public class NotFoundServlet implements Servlet {
 

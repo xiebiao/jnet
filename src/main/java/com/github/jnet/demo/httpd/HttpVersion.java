@@ -1,4 +1,4 @@
-package com.github.jnet.protocol.http11;
+package com.github.jnet.demo.httpd;
 
 public class HttpVersion {
 	public static final String VERSION = "HTTP/1.1";

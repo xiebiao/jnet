@@ -3,7 +3,7 @@ package com.github.jnet;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import com.github.jnet.protocol.http11.HttpSession;
+import com.github.jnet.demo.httpd.HttpSession;
 
 public class SessionManagerTest extends TestCase {
 

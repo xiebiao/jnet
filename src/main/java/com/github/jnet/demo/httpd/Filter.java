@@ -1,9 +1,5 @@
 package com.github.jnet.demo.httpd;
 
-import com.github.jnet.protocol.http11.HttpHeader;
-import com.github.jnet.protocol.http11.Request;
-import com.github.jnet.protocol.http11.Servlet;
-import com.github.jnet.protocol.http11.ServletFilter;
 
 public class Filter implements ServletFilter {
 

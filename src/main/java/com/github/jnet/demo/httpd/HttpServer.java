@@ -2,9 +2,6 @@ package com.github.jnet.demo.httpd;
 
 import com.github.jnet.Configuration;
 import com.github.jnet.Server;
-import com.github.jnet.protocol.http11.HttpSession;
-import com.github.jnet.protocol.http11.ServletFactory;
-import com.github.jnet.protocol.http11.ServletFilter;
 
 public class HttpServer extends Server<HttpSession> {
 
