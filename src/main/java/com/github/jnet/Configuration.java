@@ -1,101 +1,98 @@
 package com.github.jnet;
 
 public class Configuration {
-	/**
-	 * 工作线程数
-	 */
-	private int threadNumber;
-	/**
-	 * 端口
-	 */
-	private int port;
-	/**
-	 * 读超时（ms）
-	 */
-	private int readTimeout;
-	/**
-	 * 写超时（ms）
-	 */
-	private int writeTimeout;
-	/**
-	 * IP
-	 */
-	private String ip;
-	/**
-	 * 最大连接数
-	 */
-	private int maxConnection;
 
-	/**
-	 * 是否长连接
-	 */
-	// private boolean keepalive;
-	public Configuration() {
-		this.threadNumber = 100;
-		this.port = 8080;
-		this.maxConnection = 100;
-		this.readTimeout = 3000;// 3秒
-		this.writeTimeout = 3000;// 3秒
-		this.ip = "127.0.0.1";
-	}
+    /**
+     * 工作线程数
+     */
+    private int    threadNumber;
+    /**
+     * 端口
+     */
+    private int    port;
+    /**
+     * 读超时（ms）
+     */
+    private int    readTimeout;
+    /**
+     * 写超时（ms）
+     */
+    private int    writeTimeout;
+    /**
+     * IP
+     */
+    private String ip;
+    /**
+     * 最大连接数
+     */
+    private int    maxConnection;
 
-	/**
-	 * 工作线程数
-	 * 
-	 * @return
-	 */
-	public int getThreadNumber() {
-		return threadNumber;
-	}
+    /**
+     * 是否长连接
+     */
+    public Configuration() {
+        this.threadNumber = Runtime.getRuntime().availableProcessors() * 2;
+        this.port = 8080;
+        this.maxConnection = 100;
+        this.readTimeout = 3000;// 3秒
+        this.writeTimeout = 3000;// 3秒
+        this.ip = "127.0.0.1";
+    }
 
-	public void setThreadNumber(int threadNumber) {
-		this.threadNumber = threadNumber;
-	}
+    /**
+     * 工作线程数
+     * @return
+     */
+    public int getThreadNumber() {
+        return threadNumber;
+    }
 
-	public int getPort() {
-		return port;
-	}
+    public void setThreadNumber(int threadNumber) {
+        this.threadNumber = threadNumber;
+    }
 
-	public void setPort(int port) {
-		this.port = port;
-	}
+    public int getPort() {
+        return port;
+    }
 
-	public int getReadTimeout() {
-		return readTimeout;
-	}
+    public void setPort(int port) {
+        this.port = port;
+    }
 
-	public void setReadTimeout(int readTimeout) {
-		this.readTimeout = readTimeout;
-	}
+    public int getReadTimeout() {
+        return readTimeout;
+    }
 
-	public int getWriteTimeout() {
-		return writeTimeout;
-	}
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
 
-	public void setWriteTimeout(int writeTimeout) {
-		this.writeTimeout = writeTimeout;
-	}
+    public int getWriteTimeout() {
+        return writeTimeout;
+    }
 
-	public String getIp() {
-		return ip;
-	}
+    public void setWriteTimeout(int writeTimeout) {
+        this.writeTimeout = writeTimeout;
+    }
 
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
+    public String getIp() {
+        return ip;
+    }
 
-	public int getMaxConnection() {
-		return maxConnection;
-	}
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
 
-	public void setMaxConnection(int maxConnection) {
-		this.maxConnection = maxConnection;
-	}
+    public int getMaxConnection() {
+        return maxConnection;
+    }
 
-	public String toString() {
-		return "{ip=" + ip + ", port=" + port + ", threadNumber="
-				+ threadNumber + ", maxConnection=" + maxConnection
-				+ ",readTimeout=" + readTimeout + ", writeTimeout="
-				+ writeTimeout + "}";
-	}
+    public void setMaxConnection(int maxConnection) {
+        this.maxConnection = maxConnection;
+    }
+
+    public String toString() {
+        return "{ip=" + ip + ", port=" + port + ", threadNumber=" + threadNumber + ", maxConnection=" + maxConnection
+                + ",readTimeout=" + readTimeout + ", writeTimeout=" + writeTimeout + "}";
+    }
 }

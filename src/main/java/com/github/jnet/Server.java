@@ -14,8 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <p>
- * </p>
  * @author xiebiao
  */
 public abstract class Server<E extends Session> {
@@ -62,7 +60,7 @@ public abstract class Server<E extends Session> {
                     logger.warn("ServerSocket is not open.");
                     break;
                 }
-                selector.select();
+                selector.select();// block
                 try {
                     csocket = serverSocket.accept();
                     csocket.configureBlocking(false);
