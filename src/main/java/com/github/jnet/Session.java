@@ -10,33 +10,22 @@ import com.github.jnet.utils.IoBuffer;
 public abstract class Session {
 
     private static final Logger logger      = LoggerFactory.getLogger(Session.class);
-    /**
-     * 会话id
-     */
-    protected int               id          = 0;
 
-    /**
-     * 下一次超时时间
-     */
-    protected long              nextTimeout = 0;
+    protected int               id          = 0;                                     // 会话id
+
+    protected long              nextTimeout = 0;                                     // 下一次超时时间
 
     public enum IoState {
         READ, WRITE, CLOSE
     }
 
-    /**
-     * 当前IO状态
-     */
-    protected IoState currentState;
+    protected IoState currentState; // 当前IO状态
 
     public enum Event {
         READ, WRITE, TIMEOUT
     }
 
-    /**
-     * 当前会话事件
-     */
-    protected Event         currentEvent = Event.READ;
+    protected Event         currentEvent = Event.READ; // 当前会话事件
 
     protected IoBuffer      readBuffer   = null;
 
@@ -83,14 +72,18 @@ public abstract class Session {
         }
     }
 
-    public void remainToRead(int remain) {
-        readBuffer.limit(readBuffer.position() + remain);
-        setNextState(IoState.READ);
-    }
+    public void remain(int remain, IoState state) {
+        switch (state) {
+            case READ:
+                readBuffer.limit(readBuffer.position() + remain);
+                setNextState(IoState.READ);
+                break;
+            case WRITE:
+                writeBuffer.limit(writeBuffer.position() + remain);
+                setNextState(IoState.WRITE);
+                break;
+        }
 
-    public void remainToWrite(int remain) {
-        writeBuffer.limit(writeBuffer.position() + remain);
-        setNextState(IoState.WRITE);
     }
 
     /*------------------------------------------------------------------ abstract methods */
