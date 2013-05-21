@@ -1,9 +1,10 @@
 package com.github.jnet.demo.echo;
 
-import com.github.jnet.Configuration;
-import com.github.jnet.Server;
+import com.github.jnet.AbstractServer;
+import com.github.jnet.SessionManager;
+import com.github.jnet.demo.httpd.HttpSession;
 
-public class EchoServer extends Server<EchoSession> {
+public class EchoServer extends AbstractServer {
 
     public EchoServer() {
 
@@ -11,11 +12,9 @@ public class EchoServer extends Server<EchoSession> {
 
     public static void main(String[] args) throws Exception {
         try {
-            Configuration config = new Configuration();
-            config.setReadTimeout(100);
-            config.setWriteTimeout(100);
             EchoServer server = new EchoServer();
-            server.init(config, EchoSession.class);
+            SessionManager sm = new SessionManager(HttpSession.class);
+            server.init(sm);
             server.start();
         } catch (Exception e) {
             // TODO Auto-generated catch block

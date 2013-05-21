@@ -20,8 +20,30 @@ public final class SessionManager {
     private static final Logger logger      = LoggerFactory.getLogger(SessionManager.class);
     private List<Session>       sessionList = new ArrayList<Session>();
     private volatile Boolean    lock        = false;
+    private Class<?>            sessionHandler;
+    private long                readTimeout;
+    private long                writeTimeout;
 
-    public SessionManager() {}
+    public SessionManager(Class<?> sessionHandler) {
+        this.sessionHandler = sessionHandler;
+        readTimeout = writeTimeout = 1000;
+    }
+
+    public void setReadTimeout(long timeout) {
+        this.readTimeout = timeout;
+    }
+
+    public long getReadTimeout() {
+        return this.readTimeout;
+    }
+
+    public void setWriteTimeout(long timeout) {
+        this.writeTimeout = timeout;
+    }
+
+    public long getWriteTimeout() {
+        return this.writeTimeout;
+    }
 
     public Session getSession() {
         synchronized (lock) {
@@ -63,13 +85,13 @@ public final class SessionManager {
         }
     }
 
-    public <E> void initialize(Class<E> clazz, int capacity) throws Exception {
+    public void initialize(int capacity) throws Exception {
         synchronized (lock) {
             if (sessionList != null && sessionList.size() == capacity) {
                 throw new java.lang.IllegalStateException("Session pool has be initialized.");
             }
             for (int i = 0; i < capacity; i++) {
-                Object obj = clazz.newInstance();
+                Object obj = sessionHandler.newInstance();
                 Session session = (Session) obj;
                 session.setId(i);
                 session.setCurrentEvent(Session.Event.READ);

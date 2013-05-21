@@ -5,8 +5,6 @@ import java.nio.channels.SocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnet.ISession.Event;
-import com.github.jnet.ISession.IoState;
 import com.github.jnet.utils.IoBuffer;
 
 public abstract class AbstractSession implements ISession {

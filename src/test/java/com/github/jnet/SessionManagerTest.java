@@ -22,7 +22,7 @@ public class SessionManagerTest extends TestCase {
         @Override
         public void run() {
             try {
-                sm.initialize(HttpSession.class, 10);
+                sm.initialize(5);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -30,14 +30,14 @@ public class SessionManagerTest extends TestCase {
     }
 
     public void test_threads_init() {
-        SessionManager sm = new SessionManager();
+        SessionManager sm = new SessionManager(HttpSession.class);
         for (int i = 0; i < 10; i++) {
             new Thread(new ThreadInit(sm)).start();
         }
     }
 
     public void test_destroy() {
-        SessionManager sm = new SessionManager();
+        SessionManager sm = new SessionManager(HttpSession.class);
         try {
             sm.destroy();
             sm.destroy();

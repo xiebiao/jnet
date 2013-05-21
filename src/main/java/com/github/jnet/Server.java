@@ -1,6 +1,5 @@
 package com.github.jnet;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
@@ -16,52 +15,50 @@ import org.slf4j.LoggerFactory;
 /**
  * @author xiebiao
  */
-public abstract class Server<E extends Session> {
+public abstract class Server {
 
     private static final Logger logger          = LoggerFactory.getLogger(Server.class);
     protected String            name            = "Server";
-    private Configuration       config;
     private Worker[]            workers;
     private Selector            selector;
     private ServerSocketChannel serverSocket;
     private int                 nextWorkerIndex = 0;
-    private Class<E>            sessionHandler;
-    private SessionManager      sessionManager  = new SessionManager();
+    private SessionManager      sessionManager;
     private ExecutorService     executor;
     private Object              _lock           = new Object();
+    protected String            ip;
+    protected int               port;
+    protected int               threads;
+    protected int               maxConnection;
 
     public Server() {
 
     }
 
+    public abstract void setIp(String ip);
+
+    public abstract void setPort(int port);
+
+    public abstract void setThreads(int threads);
+
+    public abstract void setMaxConnection(int maxConnection);
+
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * 启动服务
-     * @throws Exception
-     */
-    public void start() throws Exception {
-        synchronized (_lock) {
-            if (this.serverSocket == null) {
-                throw new Exception("Server must initialize before start.");
-            }
-            sessionManager.initialize(this.sessionHandler, config.getMaxConnection());
-            executor = Executors.newFixedThreadPool(config.getThreadNumber(), new JnetThreadFactory());
-            for (int i = 0; i < workers.length; i++) {
-                workers[i] = new Worker(sessionManager, this.config);
-                executor.execute(workers[i]);
-            }
-            logger.info(name + " started : " + this.config.toString());
+    class Reactor implements Runnable {
+
+        @Override
+        public void run() {
             SocketChannel csocket = null;
-            while (true) {
-                if (serverSocket == null) {
-                    logger.warn("ServerSocket is not open.");
-                    break;
-                }
-                selector.select();// block
-                try {
+            try {
+                while (true) {
+                    if (serverSocket == null) {
+                        logger.warn("ServerSocket is not open.");
+                        break;
+                    }
+                    selector.select();// block
                     csocket = serverSocket.accept();
                     csocket.configureBlocking(false);
                     Session session = sessionManager.getSession();
@@ -73,43 +70,87 @@ public abstract class Server<E extends Session> {
                         session.setSocket(csocket);
                         handleNewSession(session);
                     }
-                } catch (IOException e) {
-                    if (csocket != null && csocket.isConnected()) {
-                        csocket.close();
-                    }
-                    logger.error(name + " running exception:", e);
                 }
+            } catch (Exception e) {
+                // if (csocket != null && csocket.isConnected()) {
+                // csocket.close();
+                // }
+                logger.error(name + " running exception:", e);
             }
         }
     }
 
-    public void init(Configuration config, Class<E> sessionHandler) throws Exception {
+    /**
+     * 启动服务
+     * @throws Exception
+     */
+    public void start() throws Exception {
         synchronized (_lock) {
-            this.config = config;
-            this.sessionHandler = sessionHandler;
-            workers = new Worker[config.getThreadNumber()];
+            if (this.serverSocket == null) {
+                throw new Exception("Server must initialize before start.");
+            }
+            sessionManager.initialize(this.maxConnection);
+            executor = Executors.newFixedThreadPool(this.threads, new JnetThreadFactory());
+            for (int i = 0; i < workers.length; i++) {
+                workers[i] = new Worker();
+                executor.execute(workers[i]);
+            }
+            logger.info(name + " started : " + this);
+            // new Thread(new Reactor()).start();
+            SocketChannel csocket = null;
+            try {
+                while (true) {
+                    if (serverSocket == null) {
+                        logger.warn("ServerSocket is not open.");
+                        break;
+                    }
+                    selector.select();// block
+                    csocket = serverSocket.accept();
+                    csocket.configureBlocking(false);
+                    Session session = sessionManager.getSession();
+                    if (session == null) {
+                        logger.error("Too many connection.");
+                        csocket.close();
+                        continue;
+                    } else {
+                        session.setSocket(csocket);
+                        handleNewSession(session);
+                    }
+                }
+            } catch (Exception e) {
+                if (csocket != null && csocket.isConnected()) {
+                    csocket.close();
+                }
+                logger.error(name + " running exception:", e);
+            }
+        }
+    }
+
+    public void init(SessionManager sessionManager) throws Exception {
+        synchronized (_lock) {
+            this.sessionManager = sessionManager;
+            workers = new Worker[this.threads];
             selector = Selector.open();
-            serverSocket = ServerSocketChannel.open();
-            // serverSocket.socket().setReuseAddress(true);
-            // serverSocket.setOption(StandardSocketOptions.SO_REUSEADDR,
-            // false);
+            serverSocket = ServerSocketChannel.open();;
             serverSocket.configureBlocking(false);
-            serverSocket.socket().bind(new InetSocketAddress(InetAddress.getByName(config.getIp()), config.getPort()));
+            serverSocket.socket().bind(new InetSocketAddress(InetAddress.getByName(this.ip), this.port));
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
         }
     }
 
     public void stop() throws Exception {
         synchronized (_lock) {
+            logger.debug(this.name + " stoped.");
             if (null != serverSocket) {
+                serverSocket.socket().close();
                 serverSocket.close();
                 serverSocket = null;
             }
-            this.sessionManager.destroy();
             if (null != this.executor) {
                 this.executor.shutdown();
                 this.executor = null;
             }
+            this.sessionManager.destroy();
         }
     }
 
@@ -119,7 +160,10 @@ public abstract class Server<E extends Session> {
      */
     private void handleNewSession(Session session) {
         workers[nextWorkerIndex].addNewSession(session);
-        nextWorkerIndex = (nextWorkerIndex + 1) % config.getThreadNumber();
+        nextWorkerIndex = (nextWorkerIndex + 1) % this.threads;
     }
 
+    public String toString() {
+        return "{ip:" + this.ip + ", port:" + port + ", threads:" + threads + ", maxConnection:" + maxConnection + "}";
+    }
 }
