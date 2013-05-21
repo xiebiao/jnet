@@ -46,7 +46,6 @@
 
 	</dependencies>
 	<build>
-		<finalName>jnet</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
