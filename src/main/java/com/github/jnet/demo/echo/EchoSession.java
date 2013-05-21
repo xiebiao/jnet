@@ -8,8 +8,9 @@ import com.github.jnet.utils.IoBuffer;
 
 public class EchoSession extends Session {
 
-    private static final Logger logger   = LoggerFactory.getLogger(EchoSession.class);
-    static final int            BUF_SIZE = 1024;
+    private static final Logger logger     = LoggerFactory.getLogger(EchoSession.class);
+    private static final int    BUF_SIZE   = 1024;
+    private static final byte[] SERVER_SAY = "Server say:".getBytes();
 
     @Override
     public void readCompleted(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
@@ -23,9 +24,10 @@ public class EchoSession extends Session {
             if (b == (byte) '\n') {
                 int len = readBuf.position();
                 writeBuf.position(0);
+                writeBuf.writeBytes("Server say:".getBytes());
                 writeBuf.writeBytes(readBuf.readBytes(0, len));
                 writeBuf.position(0);
-                writeBuf.limit(len);
+                writeBuf.limit(SERVER_SAY.length + len);
                 setNextState(IoState.WRITE);
                 return;
             }

@@ -45,7 +45,7 @@ public abstract class Session {
         setNextState(IoState.CLOSE);
     }
 
-    public void setNextState(IoState state) {
+    public final void setNextState(IoState state) {
         this.currentState = state;
         switch (state) {
             case WRITE:

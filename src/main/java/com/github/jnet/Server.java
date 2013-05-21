@@ -27,7 +27,7 @@ public abstract class Server {
     private ExecutorService     executor;
     private Object              _lock           = new Object();
     protected String            ip;
-    protected int               port;
+    protected int               port            = 8081;
     protected int               threads;
     protected int               maxConnection;
 
@@ -47,39 +47,6 @@ public abstract class Server {
         this.name = name;
     }
 
-    class Reactor implements Runnable {
-
-        @Override
-        public void run() {
-            SocketChannel csocket = null;
-            try {
-                while (true) {
-                    if (serverSocket == null) {
-                        logger.warn("ServerSocket is not open.");
-                        break;
-                    }
-                    selector.select();// block
-                    csocket = serverSocket.accept();
-                    csocket.configureBlocking(false);
-                    Session session = sessionManager.getSession();
-                    if (session == null) {
-                        logger.error("Too many connection.");
-                        csocket.close();
-                        continue;
-                    } else {
-                        session.setSocket(csocket);
-                        handleNewSession(session);
-                    }
-                }
-            } catch (Exception e) {
-                // if (csocket != null && csocket.isConnected()) {
-                // csocket.close();
-                // }
-                logger.error(name + " running exception:", e);
-            }
-        }
-    }
-
     /**
      * 启动服务
      * @throws Exception
@@ -92,11 +59,10 @@ public abstract class Server {
             sessionManager.initialize(this.maxConnection);
             executor = Executors.newFixedThreadPool(this.threads, new JnetThreadFactory());
             for (int i = 0; i < workers.length; i++) {
-                workers[i] = new Worker();
+                workers[i] = new Worker(sessionManager);
                 executor.execute(workers[i]);
             }
             logger.info(name + " started : " + this);
-            // new Thread(new Reactor()).start();
             SocketChannel csocket = null;
             try {
                 while (true) {
@@ -133,6 +99,9 @@ public abstract class Server {
             selector = Selector.open();
             serverSocket = ServerSocketChannel.open();;
             serverSocket.configureBlocking(false);
+            if (this.ip == null) {
+                throw new java.lang.IllegalStateException("ip can't be null");
+            }
             serverSocket.socket().bind(new InetSocketAddress(InetAddress.getByName(this.ip), this.port));
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
         }

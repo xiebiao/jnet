@@ -27,6 +27,8 @@ public class HttpSession extends Session {
         currentState = STATE_READ_HEAD;
         bodyLen = 0;
         bodyStartPos = 0;
+
+        ServletFactory.filter = (Filter) new DefaultFilter();
     }
 
     private void parseHeader(String header) throws Exception {
@@ -133,7 +135,7 @@ public class HttpSession extends Session {
         remain(BUF_SIZE, IoState.READ);
     }
 
-    public void handle(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+    private void handle(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
         Servlet action = ServletFactory.get(request);
         if (action == null) {
             throw new Exception("action not found");

@@ -10,7 +10,7 @@
 	</formats>
 	<dependencySets>
 		<dependencySet>
-			<outputDirectory>/libs</outputDirectory>
+			<outputDirectory>/lib</outputDirectory>
 		</dependencySet>
 	</dependencySets>
 	<fileSets>

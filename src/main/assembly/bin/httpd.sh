@@ -1,5 +1,5 @@
 #!/bin/sh
 
-CLASSPATH=$CLASSPATH:../libs/*
+CLASSPATH=$CLASSPATH:../lib/*
 
-java -classpath $CLASSPATH com.github.jnet.demo.httpd.HttpServer
+java -classpath $CLASSPATH com.github.jnet.Bootstrap $*

@@ -23,8 +23,7 @@ public class Worker implements Runnable {
 
     private static final Logger logger            = LoggerFactory.getLogger(Worker.class);
     private Selector            selector;
-    private int                 readTimeout       = 1000, writeTimeout = 1000;
-    // private static SessionManager sessionManager;
+    private SessionManager      sessionManager;
     private Queue<Session>      newSessionQueue   = new ConcurrentLinkedQueue<Session>();
     private List<Session>       eventSessionList  = new ArrayList<Session>();
     private Set<Session>        timeoutSessionSet = new TreeSet<Session>(new Comparator<Session>() {
@@ -40,9 +39,9 @@ public class Worker implements Runnable {
                                                       }
                                                   });
 
-    public Worker() throws IOException {
-        // sessionManager = sm;
-        selector = Selector.open();
+    public Worker(SessionManager sessionManager) throws IOException {
+        this.sessionManager = sessionManager;
+        this.selector = Selector.open();
     }
 
     /**
@@ -124,10 +123,10 @@ public class Worker implements Runnable {
      */
     private void updateSession(Session session) throws ClosedChannelException {
         if (session.getCurrentState() == Session.IoState.READ && session.readBuffer.remaining() > 0) {
-            if (readTimeout > 0) {
+            if (this.sessionManager.getReadTimeout() > 0) {
                 if (session.getNextTimeout() > System.currentTimeMillis()) {
                     /** 读操作已超时 */
-                    session.setNextTimeout(System.currentTimeMillis() + readTimeout);
+                    session.setNextTimeout(System.currentTimeMillis() + this.sessionManager.getReadTimeout());
                     addTimeoutSession(session);
                 }
             }
@@ -135,10 +134,10 @@ public class Worker implements Runnable {
             session.getSocket().register(selector, SelectionKey.OP_READ, session);
 
         } else if (session.getCurrentState() == Session.IoState.WRITE && session.writeBuffer.remaining() > 0) {
-            if (writeTimeout > 0) {
+            if (this.sessionManager.getWriteTimeout() > 0) {
                 if (session.getNextTimeout() > System.currentTimeMillis()) {
                     /** 写操作已超时 */
-                    session.setNextTimeout(System.currentTimeMillis() + writeTimeout);
+                    session.setNextTimeout(System.currentTimeMillis() + this.sessionManager.getWriteTimeout());
                     addTimeoutSession(session);
                 }
             }

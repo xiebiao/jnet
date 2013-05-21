@@ -1,27 +1,11 @@
 package com.github.jnet.demo.httpd;
 
+public interface Filter {
 
-public class Filter implements ServletFilter {
-
-	public Servlet getServlet(Request request) {
-		String url = request.header.get(HttpHeader.HEAD_URL);
-		int pos = url.indexOf("?");
-		if (pos >= 0) {
-			url = url.substring(0,pos);
-		}
-		if (url.indexOf("echo") >= 0) {
-			return new EchoServlet();
-		}
-		if (url.indexOf("time") >= 0) {
-			return new TimeServlet();
-		}
-		if (url.indexOf("error") >= 0) {
-			return new InternalServerErrorServlet();
-		}
-		if (url.indexOf("moved") >= 0) {
-			return new MovedServlet();
-		}
-		return new NotFoundServlet();
-	}
-
+    /**
+     * 根据请求的上下文获取servlet实例 ，servlet实例为线程安全，每次请求会创建一个
+     * @param request
+     * @return
+     */
+    public Servlet getServlet(Request request);
 }
