@@ -1,30 +1,15 @@
 package com.github.jnet;
 
+import java.net.InetSocketAddress;
+
 /**
  * @author xiebiao
  */
 public abstract class AbstractServer extends Server {
 
-    public AbstractServer() {
-        this.threads = 10;
+    public AbstractServer(InetSocketAddress socketAddress) {
+        super(socketAddress);
         this.maxConnection = 10;
-    }
-
-    @Override
-    public void setIp(String ip) {
-        this.ip = ip;
-
-    }
-
-    @Override
-    public void setPort(int port) {
-        this.port = port;
-
-    }
-
-    @Override
-    public void setThreads(int threads) {
-        this.threads = threads;
     }
 
     @Override

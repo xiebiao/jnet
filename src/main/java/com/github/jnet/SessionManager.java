@@ -24,9 +24,12 @@ public final class SessionManager {
     private long                readTimeout;
     private long                writeTimeout;
 
-    public SessionManager(Class<?> sessionHandler) {
-        this.sessionHandler = sessionHandler;
+    public SessionManager() {
         readTimeout = writeTimeout = 1000;
+    }
+
+    public void setHandler(Class<?> sessionHandler) {
+        this.sessionHandler = sessionHandler;
     }
 
     public void setReadTimeout(long timeout) {

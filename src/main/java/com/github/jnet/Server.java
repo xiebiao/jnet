@@ -1,6 +1,6 @@
 package com.github.jnet;
 
-import java.net.InetAddress;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -26,20 +26,14 @@ public abstract class Server {
     private SessionManager      sessionManager;
     private ExecutorService     executor;
     private Object              _lock           = new Object();
-    protected String            ip;
-    protected int               port            = 8081;
-    protected int               threads;
+    protected InetSocketAddress socketAddress;
+    private int                 threads;
     protected int               maxConnection;
 
-    public Server() {
-
+    public Server(InetSocketAddress socketAddress) {
+        this.socketAddress = socketAddress;
+        threads = Runtime.getRuntime().availableProcessors();
     }
-
-    public abstract void setIp(String ip);
-
-    public abstract void setPort(int port);
-
-    public abstract void setThreads(int threads);
 
     public abstract void setMaxConnection(int maxConnection);
 
@@ -56,12 +50,7 @@ public abstract class Server {
             if (this.serverSocket == null) {
                 throw new Exception("Server must initialize before start.");
             }
-            sessionManager.initialize(this.maxConnection);
-            executor = Executors.newFixedThreadPool(this.threads, new JnetThreadFactory());
-            for (int i = 0; i < workers.length; i++) {
-                workers[i] = new Worker(sessionManager);
-                executor.execute(workers[i]);
-            }
+            setWorkers();
             logger.info(name + " started : " + this);
             SocketChannel csocket = null;
             try {
@@ -92,17 +81,23 @@ public abstract class Server {
         }
     }
 
+    private void setWorkers() throws Exception, IOException {
+        sessionManager.initialize(this.maxConnection);
+        executor = Executors.newFixedThreadPool(this.threads, new JnetThreadFactory());
+        workers = new Worker[this.threads];
+        for (int i = 0; i < workers.length; i++) {
+            workers[i] = new Worker(sessionManager);
+            executor.execute(workers[i]);
+        }
+    }
+
     public void init(SessionManager sessionManager) throws Exception {
         synchronized (_lock) {
             this.sessionManager = sessionManager;
-            workers = new Worker[this.threads];
             selector = Selector.open();
             serverSocket = ServerSocketChannel.open();;
             serverSocket.configureBlocking(false);
-            if (this.ip == null) {
-                throw new java.lang.IllegalStateException("ip can't be null");
-            }
-            serverSocket.socket().bind(new InetSocketAddress(InetAddress.getByName(this.ip), this.port));
+            serverSocket.socket().bind(this.socketAddress);
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
         }
     }
@@ -133,6 +128,7 @@ public abstract class Server {
     }
 
     public String toString() {
-        return "{ip:" + this.ip + ", port:" + port + ", threads:" + threads + ", maxConnection:" + maxConnection + "}";
+        return "{ip:" + this.socketAddress.getHostName() + ", port:" + this.socketAddress.getPort() + ", threads:"
+                + threads + ", maxConnection:" + maxConnection + "}";
     }
 }
