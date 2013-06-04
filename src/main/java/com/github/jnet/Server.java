@@ -97,7 +97,7 @@ public abstract class Server {
             selector = Selector.open();
             serverSocket = ServerSocketChannel.open();;
             serverSocket.configureBlocking(false);
-            serverSocket.socket().bind(this.socketAddress);
+            serverSocket.socket().bind(new InetSocketAddress("127.0.0.1",9000));
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
         }
     }
