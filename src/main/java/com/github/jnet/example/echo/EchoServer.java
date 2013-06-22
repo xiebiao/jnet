@@ -1,4 +1,4 @@
-package com.github.jnet.demo.echo;
+package com.github.jnet.example.echo;
 
 import java.net.InetSocketAddress;
 

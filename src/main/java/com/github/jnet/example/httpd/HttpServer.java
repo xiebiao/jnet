@@ -1,4 +1,4 @@
-package com.github.jnet.demo.httpd;
+package com.github.jnet.example.httpd;
 
 import java.net.InetSocketAddress;
 

@@ -1,4 +1,4 @@
-package com.github.jnet.demo.httpd;
+package com.github.jnet.example.httpd;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

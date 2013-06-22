@@ -1,4 +1,4 @@
-package com.github.jnet.demo.httpd;
+package com.github.jnet.example.httpd;
 
 
 public class MovedServlet implements Servlet {
