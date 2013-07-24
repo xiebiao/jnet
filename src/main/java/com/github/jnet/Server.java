@@ -59,8 +59,9 @@ public abstract class Server {
                         logger.warn("ServerSocket is not open.");
                         break;
                     }
-                    selector.select();// block
+                    selector.select(1000L);// block
                     csocket = serverSocket.accept();
+                    if (csocket == null) continue;
                     csocket.configureBlocking(false);
                     Session session = sessionManager.getSession();
                     if (session == null) {
