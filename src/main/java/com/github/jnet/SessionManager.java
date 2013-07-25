@@ -74,7 +74,7 @@ public final class SessionManager {
                 Session session = sessionList.remove(i);
                 session.setNextState(Session.IoState.CLOSE);
                 try {
-                    SocketChannel s = session.getSocket();
+                    SocketChannel s = session.getSocketChannel();
                     if (s != null && s.isOpen()) {
                         s.close();
                     }

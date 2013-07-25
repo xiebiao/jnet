@@ -11,26 +11,21 @@ public class SampleSession extends Session {
 
     }
 
-    @Override
-    public void readCompleted(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
-        System.out.println("readCompleted");
-
-    }
 
     @Override
-    public void reading(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+    public void read(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
         System.out.println("reading");
 
     }
 
-    @Override
-    public void writeCompleted(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
-        System.out.println("writeCompleted");
+//    @Override
+//    public void writeCompleted(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+//        System.out.println("writeCompleted");
+//
+//    }
 
-    }
-
     @Override
-    public void writing(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+    public void write(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
         // TODO Auto-generated method stub
 
     }

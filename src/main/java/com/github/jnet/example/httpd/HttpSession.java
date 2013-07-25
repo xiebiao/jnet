@@ -99,13 +99,10 @@ public class HttpSession extends Session {
         }
     }
 
-    @Override
-    public void readCompleted(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
-        this.setNextState(IoState.CLOSE);
-    }
+
 
     @Override
-    public void reading(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+    public void read(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
         logger.info("Poccess the Session[" + this.getId() + "] ");
         logger.debug(readBuf.toString());
         if (currentState == STATE_READ_HEAD) {
@@ -149,12 +146,6 @@ public class HttpSession extends Session {
         response.reset();
         logger.info("Write buffer to Session[" + this.getId() + "].");
     }
-
-    @Override
-    public void writeCompleted(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
-        setNextState(IoState.CLOSE);
-    }
-
     @Override
     public void open(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
         remain(BUF_SIZE, IoState.READ);
@@ -165,7 +156,7 @@ public class HttpSession extends Session {
     }
 
     @Override
-    public void writing(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+    public void write(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
         logger.info(this.toString() + " writing...");
 
     }

@@ -131,7 +131,7 @@ public class Worker implements Runnable {
                 }
             }
             /** session注册socket读事件 */
-            session.getSocket().register(selector, SelectionKey.OP_READ, session);
+            session.getSocketChannel().register(selector, SelectionKey.OP_READ, session);
 
         } else if (session.getCurrentState() == Session.IoState.WRITE && session.writeBuffer.remaining() > 0) {
             if (this.sessionManager.getWriteTimeout() > 0) {
@@ -142,7 +142,7 @@ public class Worker implements Runnable {
                 }
             }
             /** session注册socket读事件 */
-            session.getSocket().register(selector, SelectionKey.OP_WRITE, session);
+            session.getSocketChannel().register(selector, SelectionKey.OP_WRITE, session);
         } else {
             /** 关闭 session */
             close(session);
@@ -212,44 +212,43 @@ public class Worker implements Runnable {
         }
     }
 
-    private void ioEvent(Session session, IoBuffer buf) throws Exception {
-        while (buf.remaining() > 0) {
-            int len = 0;
+    private void ioEvent(Session session, IoBuffer buffer) throws Exception {
+        while (buffer.remaining() > 0) {
+            int dataLength = 0;
             Session.IoState curState = session.getCurrentState();
-            /** ------------------------------- 处理IO */
+            // 根据Session状态
             switch (curState) {
                 case READ:
-                    len = IoUtils.read(session, session.getSocket(), buf);
+                    dataLength = IoUtils.read(session.getSocketChannel(), buffer);
                     break;
                 case WRITE:
-                    len = IoUtils.write(session, session.getSocket(), buf);
+                    dataLength = IoUtils.write(session.getSocketChannel(), buffer);
                     break;
                 case CLOSE:
                     break;
             }
-            int remain = buf.remaining();
-            /** ------------------------------- 处理session */
+            // 还有多少数据未处理
+            int remain = buffer.remaining();
             switch (curState) {
                 case READ:
                     if (remain == 0) {
-                        session.readCompleted(session.readBuffer, session.writeBuffer);
+                        session.setNextState(Session.IoState.CLOSE);
                     } else {
-                        session.reading(session.readBuffer, session.writeBuffer);
+                        session.read(session.readBuffer, session.writeBuffer);
                     }
                     break;
                 case WRITE:
                     if (remain == 0) {
-                        session.writeCompleted(session.readBuffer, session.writeBuffer);
+                        session.setNextState(Session.IoState.CLOSE);
                     } else {
-                        session.writing(session.readBuffer, session.writeBuffer);
+                        session.write(session.readBuffer, session.writeBuffer);
                     }
                     break;
                 case CLOSE:
                     break;
+            }
 
-            }
-            if (len == 0 || session.getCurrentState() != curState) {
-                /** 更新session状态 */
+            if (dataLength == 0 || session.getCurrentState() != curState) {
                 updateSession(session);
                 break;
             }
@@ -279,18 +278,18 @@ public class Worker implements Runnable {
      * @param session
      */
     private void close(Session session) {
-        if (session.getSocket() != null) {
+        if (session.getSocketChannel() != null) {
             try {
-                if (session.getSocket().keyFor(selector) != null) {
-                    session.getSocket().keyFor(selector).cancel();
+                if (session.getSocketChannel().keyFor(selector) != null) {
+                    session.getSocketChannel().keyFor(selector).cancel();
                 }
-                if (session.getSocket().isConnected()) {
-                    session.getSocket().close();
+                if (session.getSocketChannel().isConnected()) {
+                    session.getSocketChannel().close();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            session.setSocket(null);
+            session.setSocketChannel(null);
         }
         timeoutSessionSet.remove(session);
         session.close();

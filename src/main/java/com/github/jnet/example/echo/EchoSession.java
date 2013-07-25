@@ -12,13 +12,13 @@ public class EchoSession extends Session {
     private static final int    BUF_SIZE   = 1024;
     private static final byte[] SERVER_SAY = "Server say:".getBytes();
 
-    @Override
-    public void readCompleted(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
-        this.setNextState(IoState.WRITE);
-    }
+//    @Override
+//    public void readCompleted(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+//        this.setNextState(IoState.WRITE);
+//    }
 
     @Override
-    public void reading(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+    public void read(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
         if (readBuf.position() > 1) {
             byte b = readBuf.getByte(readBuf.position() - 1);
             if (b == (byte) '\n') {
@@ -35,12 +35,12 @@ public class EchoSession extends Session {
         remain(BUF_SIZE, IoState.READ);
     }
 
-    @Override
-    public void writeCompleted(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
-        /** Session未关闭，则继续读取IO,同时position复位 */
-        readBuf.position(0);
-        remain(BUF_SIZE, IoState.READ);
-    }
+//    @Override
+//    public void writeCompleted(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+//        /** Session未关闭，则继续读取IO,同时position复位 */
+//        readBuf.position(0);
+//        remain(BUF_SIZE, IoState.READ);
+//    }
 
     @Override
     public void open(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
@@ -58,7 +58,7 @@ public class EchoSession extends Session {
     }
 
     @Override
-    public void writing(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+    public void write(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
 
     }
 

@@ -69,7 +69,7 @@ public abstract class Server {
                         csocket.close();
                         continue;
                     } else {
-                        session.setSocket(csocket);
+                        session.setSocketChannel(csocket);
                         handleNewSession(session);
                     }
                 }

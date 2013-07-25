@@ -49,26 +49,18 @@ public abstract class Session {
         this.currentState = state;
         switch (state) {
             case WRITE:
+                logger.info("Set the Session[" + this.getId() + "] : currentState = " + "STATE_WRITE.");
                 readBuffer.position(0);
                 readBuffer.limit(0);
                 break;
             case READ:
+                logger.info("Set the Session[" + this.getId() + "] : currentState = " + "STATE_READ.");
                 writeBuffer.position(0);
                 writeBuffer.limit(0);
                 break;
             case CLOSE:
-                this.close();
-        }
-        switch (state) {
-            case READ:
-                logger.info("Set the Session[" + this.getId() + "] : currentState = " + "STATE_READ.");
-                break;
-            case WRITE:
-                logger.info("Set the Session[" + this.getId() + "] : currentState = " + "STATE_WRITE.");
-                break;
-            case CLOSE:
                 logger.info("Set Session[" + this.getId() + "] : currentState = " + "STATE_CLOSE.");
-                break;
+                this.close();
         }
     }
 
@@ -89,13 +81,9 @@ public abstract class Session {
     /*------------------------------------------------------------------ abstract methods */
     public abstract void open(IoBuffer readBuf, IoBuffer writeBuf) throws Exception;
 
-    public abstract void readCompleted(IoBuffer readBuf, IoBuffer writeBuf) throws Exception;
+    public abstract void read(IoBuffer readBuf, IoBuffer writeBuf) throws Exception;
 
-    public abstract void reading(IoBuffer readBuf, IoBuffer writeBuf) throws Exception;
-
-    public abstract void writeCompleted(IoBuffer readBuf, IoBuffer writeBuf) throws Exception;
-
-    public abstract void writing(IoBuffer readBuf, IoBuffer writeBuf) throws Exception;
+    public abstract void write(IoBuffer readBuf, IoBuffer writeBuf) throws Exception;
 
     public abstract void close();
 
@@ -120,11 +108,11 @@ public abstract class Session {
         this.readBuffer = readBuf;
     }
 
-    public SocketChannel getSocket() {
+    public SocketChannel getSocketChannel() {
         return socket;
     }
 
-    public void setSocket(SocketChannel socket) {
+    public void setSocketChannel(SocketChannel socket) {
         this.socket = socket;
     }
 

@@ -28,13 +28,6 @@ public final class IoUtils {
 		return len;
 	}
 
-	public static int read(Session session, SocketChannel socket, IoBuffer buf)
-			throws IOException {
-//		logger.debug("Session[" + session.getId() + "] is reading \n"
-//				+ buf.toString());
-		return read(socket, buf);
-	}
-
 	/**
 	 * 网络写操作
 	 * 
