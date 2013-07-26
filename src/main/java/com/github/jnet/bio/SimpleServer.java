@@ -6,10 +6,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SimpleServer {
 
-    private ServerSocket serverSocket;
+    private ServerSocket  serverSocket;
+    private AtomicBoolean hasRead = new AtomicBoolean(false);
 
     public SimpleServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
@@ -28,9 +30,7 @@ public class SimpleServer {
     }
 
     class Worker implements Runnable {
-
         private Socket socket;
-
         Worker(Socket socket) {
             this.socket = socket;
         }
@@ -39,10 +39,10 @@ public class SimpleServer {
         public void run() {
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                PrintWriter writer = new PrintWriter(socket.getOutputStream());
                 String line = null;
+                PrintWriter writer = new PrintWriter(socket.getOutputStream());
                 while (reader != null && (line = reader.readLine()) != null && !line.equals("\n")) {
-                    System.out.println(line);
+                    System.out.println(line);        
                     writer.write(line + "\r\n");
                     writer.flush();
                 }
@@ -50,7 +50,7 @@ public class SimpleServer {
                 e.printStackTrace();
             }
         }
-    }
+    }  
 
     public static void main(String[] args) throws IOException {
         SimpleServer server = new SimpleServer(8081);
