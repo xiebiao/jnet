@@ -1,5 +1,8 @@
 package com.github.jnet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
@@ -9,26 +12,23 @@ import java.nio.channels.SocketChannel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @author xiebiao
  */
 public abstract class Server {
 
-    private static final Logger logger          = LoggerFactory.getLogger(Server.class);
-    protected String            name            = "Server";
-    private Worker[]            workers;
-    private Selector            selector;
+    private static final Logger logger = LoggerFactory.getLogger(Server.class);
+    protected String name = "Server";
+    private Worker[] workers;
+    private Selector selector;
     private ServerSocketChannel serverSocket;
-    private int                 nextWorkerIndex = 0;
-    private SessionManager      sessionManager;
-    private ExecutorService     executor;
-    private Object              _lock           = new Object();
+    private int nextWorkerIndex = 0;
+    private SessionManager sessionManager;
+    private ExecutorService executor;
+    private Object _lock = new Object();
     protected InetSocketAddress socketAddress;
-    private int                 threads;
-    protected int               maxConnection;
+    private int threads;
+    protected int maxConnection;
 
     public Server(InetSocketAddress socketAddress) {
         this.socketAddress = socketAddress;
@@ -43,6 +43,7 @@ public abstract class Server {
 
     /**
      * 启动服务
+     *
      * @throws Exception
      */
     public void start() throws Exception {
@@ -61,7 +62,8 @@ public abstract class Server {
                     }
                     selector.select(1000L);// block
                     csocket = serverSocket.accept();
-                    if (csocket == null) continue;
+                    if (csocket == null)
+                        continue;
                     csocket.configureBlocking(false);
                     Session session = sessionManager.getSession();
                     if (session == null) {
@@ -82,7 +84,7 @@ public abstract class Server {
         }
     }
 
-    private void setWorkers() throws Exception, IOException {
+    private void setWorkers() throws SessionException, IOException {
         sessionManager.initialize(this.maxConnection);
         executor = Executors.newFixedThreadPool(this.threads, new JnetThreadFactory());
         workers = new Worker[this.threads];
@@ -96,7 +98,7 @@ public abstract class Server {
         synchronized (_lock) {
             this.sessionManager = sessionManager;
             selector = Selector.open();
-            serverSocket = ServerSocketChannel.open();;
+            serverSocket = ServerSocketChannel.open();
             serverSocket.configureBlocking(false);
             serverSocket.socket().bind(this.socketAddress);
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
@@ -121,6 +123,7 @@ public abstract class Server {
 
     /**
      * 处理一个新session，为其指定一个工作线程，并加入到工作线程新session队列
+     *
      * @param session
      */
     private void handleNewSession(Session session) {
@@ -129,7 +132,8 @@ public abstract class Server {
     }
 
     public String toString() {
-        return "{ip:" + this.socketAddress.getHostName() + ", port:" + this.socketAddress.getPort() + ", threads:"
-                + threads + ", maxConnection:" + maxConnection + "}";
+        return "{ip:" + this.socketAddress.getHostName() + ", port:" + this.socketAddress.getPort()
+            + ", threads:"
+            + threads + ", maxConnection:" + maxConnection + "}";
     }
 }

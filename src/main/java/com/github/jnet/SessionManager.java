@@ -1,28 +1,28 @@
 package com.github.jnet;
 
+import com.github.jnet.utils.IoBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.jnet.utils.IoBuffer;
-
 /**
  * 会话管理
+ *
  * @author xiebiao
  */
 public final class SessionManager {
 
-    private static final Logger logger      = LoggerFactory.getLogger(SessionManager.class);
-    private List<Session>       sessionList = new ArrayList<Session>();
-    private volatile Boolean    lock        = false;
-    private Class<?>            sessionHandler;
-    private long                readTimeout;
-    private long                writeTimeout;
+    private static final Logger logger = LoggerFactory.getLogger(SessionManager.class);
+    private List<Session> sessionList = new ArrayList<Session>();
+    private volatile Boolean lock = false;
+    private Class<?> sessionHandler;
+    private long readTimeout;
+    private long writeTimeout;
 
     public SessionManager() {
         readTimeout = writeTimeout = 1000;
@@ -88,20 +88,24 @@ public final class SessionManager {
         }
     }
 
-    public void initialize(int capacity) throws Exception {
+    public void initialize(int capacity) throws SessionException {
         synchronized (lock) {
             if (sessionList != null && sessionList.size() == capacity) {
                 throw new java.lang.IllegalStateException("Session pool has be initialized.");
             }
-            for (int i = 0; i < capacity; i++) {
-                Object obj = sessionHandler.newInstance();
-                Session session = (Session) obj;
-                session.setId(i);
-                session.setCurrentEvent(Session.Event.READ);
-                session.setIdle(false);
-                session.setReadBuffer(new IoBuffer());
-                session.setWriteBuffer(new IoBuffer());
-                sessionList.add(session);
+            try {
+                for (int i = 0; i < capacity; i++) {
+                    Object obj = sessionHandler.newInstance();
+                    Session session = (Session) obj;
+                    session.setId(i);
+                    session.setCurrentEvent(Session.Event.READ);
+                    session.setIdle(false);
+                    session.setReadBuffer(new IoBuffer());
+                    session.setWriteBuffer(new IoBuffer());
+                    sessionList.add(session);
+                }
+            } catch (Exception e) {
+                throw new SessionException("session", e);
             }
         }
     }
