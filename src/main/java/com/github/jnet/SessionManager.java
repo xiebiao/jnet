@@ -1,6 +1,6 @@
 package com.github.jnet;
 
-import com.github.jnet.utils.IoBuffer;
+import com.github.jnet.utils.IOBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +72,7 @@ public final class SessionManager {
         synchronized (lock) {
             for (int i = 0; i < sessionList.size(); i++) {
                 Session session = sessionList.remove(i);
-                session.setNextState(Session.IoState.CLOSE);
+                session.setNextState(Session.IOState.CLOSE);
                 try {
                     SocketChannel s = session.getSocketChannel();
                     if (s != null && s.isOpen()) {
@@ -100,8 +100,8 @@ public final class SessionManager {
                     session.setId(i);
                     session.setCurrentEvent(Session.Event.READ);
                     session.setIdle(false);
-                    session.setReadBuffer(new IoBuffer());
-                    session.setWriteBuffer(new IoBuffer());
+                    session.setReadBuffer(new IOBuffer());
+                    session.setWriteBuffer(new IOBuffer());
                     sessionList.add(session);
                 }
             } catch (Exception e) {

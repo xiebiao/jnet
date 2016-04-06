@@ -12,8 +12,8 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnet.utils.IoBuffer;
-import com.github.jnet.utils.IoUtils;
+import com.github.jnet.utils.IOBuffer;
+import com.github.jnet.utils.IOUtils;
 
 public class Client {
 
@@ -125,7 +125,7 @@ public class Client {
      * @throws Exception
      */
     public void write(byte[] stream) throws Exception {
-        IoBuffer writeBuf = new IoBuffer();
+        IOBuffer writeBuf = new IOBuffer();
         writeBuf.position(0);
         writeBuf.limit(stream.length);
         writeBuf.writeBytes(stream);
@@ -138,7 +138,7 @@ public class Client {
      * @param stream
      * @throws Exception
      */
-    public void write(IoBuffer writeBuf) throws Exception {
+    public void write(IOBuffer writeBuf) throws Exception {
         Selector selector = null;
         try {
             selector = Selector.open();
@@ -155,7 +155,7 @@ public class Client {
                     break;
                 }
 
-                IoUtils.write(socket, writeBuf);
+                IOUtils.write(socket, writeBuf);
                 if (writeBuf.remaining() == 0) {
                     break;
                 }
@@ -192,7 +192,7 @@ public class Client {
      * @throws Exception
      */
     public byte[] read(int len) throws Exception {
-        IoBuffer readBuf = new IoBuffer();
+        IOBuffer readBuf = new IOBuffer();
         readBuf.position(0);
         readBuf.limit(len);
         read(readBuf);
@@ -205,7 +205,7 @@ public class Client {
      * @return
      * @throws Exception
      */
-    public void read(IoBuffer readBuf) throws Exception {
+    public void read(IOBuffer readBuf) throws Exception {
         Selector selector = null;
         try {
             selector = Selector.open();
@@ -221,7 +221,7 @@ public class Client {
                     logger.warn("read time out");
                     break;
                 }
-                IoUtils.read(socket, readBuf);
+                IOUtils.read(socket, readBuf);
                 if (readBuf.remaining() == 0) {
                     break;
                 }

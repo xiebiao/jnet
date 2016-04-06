@@ -16,8 +16,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnet.utils.IoBuffer;
-import com.github.jnet.utils.IoUtils;
+import com.github.jnet.utils.IOBuffer;
+import com.github.jnet.utils.IOUtils;
 
 public class Worker implements Runnable {
 
@@ -122,7 +122,7 @@ public class Worker implements Runnable {
      * @throws ClosedChannelException
      */
     private void updateSession(Session session) throws ClosedChannelException {
-        if (session.getCurrentState() == Session.IoState.READ && session.readBuffer.remaining() > 0) {
+        if (session.getCurrentState() == Session.IOState.READ && session.readBuffer.remaining() > 0) {
             if (this.sessionManager.getReadTimeout() > 0) {
                 if (session.getNextTimeout() > System.currentTimeMillis()) {
                     /** 读操作已超时 */
@@ -133,7 +133,7 @@ public class Worker implements Runnable {
             /** session注册socket读事件 */
             session.getSocketChannel().register(selector, SelectionKey.OP_READ, session);
 
-        } else if (session.getCurrentState() == Session.IoState.WRITE && session.writeBuffer.remaining() > 0) {
+        } else if (session.getCurrentState() == Session.IOState.WRITE && session.writeBuffer.remaining() > 0) {
             if (this.sessionManager.getWriteTimeout() > 0) {
                 if (session.getNextTimeout() > System.currentTimeMillis()) {
                     /** 写操作已超时 */
@@ -186,9 +186,9 @@ public class Worker implements Runnable {
             try {
                 if (session.getCurrentEvent() == Session.Event.TIMEOUT) {
                     timeoutEvent(session);
-                } else if (session.getCurrentState() == Session.IoState.READ) {
+                } else if (session.getCurrentState() == Session.IOState.READ) {
                     readEvent(session);
-                } else if (session.getCurrentState() == Session.IoState.WRITE) {
+                } else if (session.getCurrentState() == Session.IOState.WRITE) {
                     writeEvent(session);
                 }
             } catch (Exception e) {
@@ -212,17 +212,17 @@ public class Worker implements Runnable {
         }
     }
 
-    private void ioEvent(Session session, IoBuffer buffer) throws Exception {
+    private void ioEvent(Session session, IOBuffer buffer) throws Exception {
         while (buffer.remaining() > 0) {
             int dataLength = 0;
-            Session.IoState curState = session.getCurrentState();
+            Session.IOState curState = session.getCurrentState();
             // 根据Session状态
             switch (curState) {
                 case READ:
-                    dataLength = IoUtils.read(session.getSocketChannel(), buffer);
+                    dataLength = IOUtils.read(session.getSocketChannel(), buffer);
                     break;
                 case WRITE:
-                    dataLength = IoUtils.write(session.getSocketChannel(), buffer);
+                    dataLength = IOUtils.write(session.getSocketChannel(), buffer);
                     break;
                 case CLOSE:
                     break;
@@ -232,14 +232,14 @@ public class Worker implements Runnable {
             switch (curState) {
                 case READ:
                     if (remain == 0) {
-                        session.setNextState(Session.IoState.CLOSE);
+                        session.setNextState(Session.IOState.CLOSE);
                     } else {
                         session.read(session.readBuffer, session.writeBuffer);
                     }
                     break;
                 case WRITE:
                     if (remain == 0) {
-                        session.setNextState(Session.IoState.CLOSE);
+                        session.setNextState(Session.IOState.CLOSE);
                     } else {
                         session.write(session.readBuffer, session.writeBuffer);
                     }

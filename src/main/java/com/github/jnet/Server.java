@@ -51,7 +51,7 @@ public abstract class Server {
             if (this.serverSocket == null) {
                 throw new Exception("Server must initialize before start.");
             }
-            setWorkers();
+            initWorkers();
             logger.info(name + " started : " + this);
             SocketChannel csocket = null;
             try {
@@ -84,7 +84,7 @@ public abstract class Server {
         }
     }
 
-    private void setWorkers() throws SessionException, IOException {
+    private void initWorkers() throws SessionException, IOException {
         sessionManager.initialize(this.maxConnection);
         executor = Executors.newFixedThreadPool(this.threads, new JnetThreadFactory());
         workers = new Worker[this.threads];
