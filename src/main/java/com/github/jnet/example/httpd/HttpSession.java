@@ -109,7 +109,7 @@ public class HttpSession extends Session {
             String buf = readBuf.getString("ASCII");
             int endPos = buf.indexOf("\r\n\r\n");
             if (endPos == -1) {
-                remain(BUF_SIZE, IOState.READ);
+                remain(BUF_SIZE, IoState.READ);
             }
             currentState = STATE_READ_BODY;
             String header = buf.substring(0, endPos);
@@ -118,18 +118,18 @@ public class HttpSession extends Session {
         }
         if (currentState == STATE_READ_BODY) {
             if (bodyStartPos + bodyLen > readBuf.position()) {
-                remain(bodyStartPos + bodyLen - readBuf.position(), IOState.READ);
+                remain(bodyStartPos + bodyLen - readBuf.position(), IoState.READ);
                 return;
             }
             currentState = STATE_READ_HEAD;
             String body = readBuf.getString(bodyStartPos, bodyLen, "ASCII");
             parseBody(body);
             handle(readBuf, writeBuf);
-            setNextState(IOState.WRITE);
+            setNextState(IoState.WRITE);
             return;
         }
         /** 读取剩下buffer */
-        remain(BUF_SIZE, IOState.READ);
+        remain(BUF_SIZE, IoState.READ);
     }
 
     private void handle(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
@@ -148,7 +148,7 @@ public class HttpSession extends Session {
     }
     @Override
     public void open(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
-        remain(BUF_SIZE, IOState.READ);
+        remain(BUF_SIZE, IoState.READ);
     }
 
     public String toString() {

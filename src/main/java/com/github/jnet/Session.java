@@ -15,12 +15,12 @@ public abstract class Session {
   // 下一次超时时间
   protected long nextTimeout = 0;
 
-  public enum IOState {
+  public enum IoState {
     READ, WRITE, CLOSE
   }
 
   // 当前IO状态
-  protected IOState currentState;
+  protected IoState currentState;
 
   public enum Event {
     READ, WRITE, TIMEOUT
@@ -44,10 +44,10 @@ public abstract class Session {
   /*------------------------------------------------------------------ change state */
   public void timeout() throws Exception {
     logger.debug("The Session " + this.getId() + " is timeout, will be closed.");
-    setNextState(IOState.CLOSE);
+    setNextState(IoState.CLOSE);
   }
 
-  public final void setNextState(IOState state) {
+  public final void setNextState(IoState state) {
     this.currentState = state;
     switch (state) {
       case WRITE:
@@ -66,15 +66,15 @@ public abstract class Session {
     }
   }
 
-  public void remain(int remain, IOState state) {
+  public void remain(int remain, IoState state) {
     switch (state) {
       case READ:
         readBuffer.limit(readBuffer.position() + remain);
-        setNextState(IOState.READ);
+        setNextState(IoState.READ);
         break;
       case WRITE:
         writeBuffer.limit(writeBuffer.position() + remain);
-        setNextState(IOState.WRITE);
+        setNextState(IoState.WRITE);
         break;
     }
 
@@ -138,7 +138,7 @@ public abstract class Session {
     this.nextTimeout = nextTimeout;
   }
 
-  public IOState getCurrentState() {
+  public IoState getCurrentState() {
     return currentState;
   }
 

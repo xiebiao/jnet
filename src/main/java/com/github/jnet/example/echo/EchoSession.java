@@ -28,11 +28,11 @@ public class EchoSession extends Session {
                 writeBuf.writeBytes(readBuf.readBytes(0, len));
                 writeBuf.position(0);
                 writeBuf.limit(SERVER_SAY.length + len);
-                setNextState(IOState.WRITE);
+                setNextState(IoState.WRITE);
                 return;
             }
         }
-        remain(BUF_SIZE, IOState.READ);
+        remain(BUF_SIZE, IoState.READ);
     }
 
 //    @Override
@@ -45,7 +45,7 @@ public class EchoSession extends Session {
     @Override
     public void open(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
         logger.debug("Open session");
-        remain(BUF_SIZE, IOState.READ);
+        remain(BUF_SIZE, IoState.READ);
     }
 
     @Override

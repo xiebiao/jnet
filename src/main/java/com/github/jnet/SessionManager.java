@@ -72,7 +72,7 @@ public final class SessionManager {
         synchronized (lock) {
             for (int i = 0; i < sessionList.size(); i++) {
                 Session session = sessionList.remove(i);
-                session.setNextState(Session.IOState.CLOSE);
+                session.setNextState(Session.IoState.CLOSE);
                 try {
                     SocketChannel s = session.getSocketChannel();
                     if (s != null && s.isOpen()) {
