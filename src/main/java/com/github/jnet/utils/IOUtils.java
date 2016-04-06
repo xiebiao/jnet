@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jnet.Session;
 
-public final class IOUtils {
-	private static Logger logger = LoggerFactory.getLogger(IOUtils.class);
+public final class IoUtils {
+	private static Logger logger = LoggerFactory.getLogger(IoUtils.class);
 
 	/**
 	 * 网络读操作

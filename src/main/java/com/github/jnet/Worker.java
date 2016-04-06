@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jnet.utils.IOBuffer;
-import com.github.jnet.utils.IOUtils;
+import com.github.jnet.utils.IoUtils;
 
 public class Worker implements Runnable {
 
@@ -219,10 +219,10 @@ public class Worker implements Runnable {
             // 根据Session状态
             switch (curState) {
                 case READ:
-                    dataLength = IOUtils.read(session.getSocketChannel(), buffer);
+                    dataLength = IoUtils.read(session.getSocketChannel(), buffer);
                     break;
                 case WRITE:
-                    dataLength = IOUtils.write(session.getSocketChannel(), buffer);
+                    dataLength = IoUtils.write(session.getSocketChannel(), buffer);
                     break;
                 case CLOSE:
                     break;

@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jnet.utils.IOBuffer;
-import com.github.jnet.utils.IOUtils;
+import com.github.jnet.utils.IoUtils;
 
 public class Client {
 
@@ -155,7 +155,7 @@ public class Client {
                     break;
                 }
 
-                IOUtils.write(socket, writeBuf);
+                IoUtils.write(socket, writeBuf);
                 if (writeBuf.remaining() == 0) {
                     break;
                 }
@@ -221,7 +221,7 @@ public class Client {
                     logger.warn("read time out");
                     break;
                 }
-                IOUtils.read(socket, readBuf);
+                IoUtils.read(socket, readBuf);
                 if (readBuf.remaining() == 0) {
                     break;
                 }
