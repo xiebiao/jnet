@@ -13,18 +13,18 @@ import java.nio.ReadOnlyBufferException;
  * @author xiebiao
  * 
  */
-public class IOBuffer {
+public class IoBuffer {
   protected ByteBuffer buf;
 
   public ByteBuffer getBuffer() {
     return buf;
   }
 
-  public IOBuffer(int initSize) {
+  public IoBuffer(int initSize) {
     buf = ByteBuffer.allocate(initSize);
   }
 
-  public IOBuffer() {
+  public IoBuffer() {
     buf = ByteBuffer.allocate(0);
   }
 

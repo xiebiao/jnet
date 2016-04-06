@@ -1,19 +1,19 @@
 package com.github.jnet;
 
-import com.github.jnet.utils.IOBuffer;
+import com.github.jnet.utils.IoBuffer;
 
 
 public class SampleSession extends Session {
 
     @Override
-    public void open(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
+    public void open(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
         System.out.println("open");
 
     }
 
 
     @Override
-    public void read(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
+    public void read(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
         System.out.println("reading");
 
     }
@@ -25,7 +25,7 @@ public class SampleSession extends Session {
 //    }
 
     @Override
-    public void write(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
+    public void write(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
         // TODO Auto-generated method stub
 
     }

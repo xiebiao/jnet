@@ -1,6 +1,6 @@
 package com.github.jnet;
 
-import com.github.jnet.utils.IOBuffer;
+import com.github.jnet.utils.IoBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,8 +100,8 @@ public final class SessionManager {
                     session.setId(i);
                     session.setCurrentEvent(Session.Event.READ);
                     session.setIdle(false);
-                    session.setReadBuffer(new IOBuffer());
-                    session.setWriteBuffer(new IOBuffer());
+                    session.setReadBuffer(new IoBuffer());
+                    session.setWriteBuffer(new IoBuffer());
                     sessionList.add(session);
                 }
             } catch (Exception e) {

@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnet.utils.IOBuffer;
+import com.github.jnet.utils.IoBuffer;
 import com.github.jnet.utils.IoUtils;
 
 public class Worker implements Runnable {
@@ -212,7 +212,7 @@ public class Worker implements Runnable {
         }
     }
 
-    private void ioEvent(Session session, IOBuffer buffer) throws Exception {
+    private void ioEvent(Session session, IoBuffer buffer) throws Exception {
         while (buffer.remaining() > 0) {
             int dataLength = 0;
             Session.IoState curState = session.getCurrentState();

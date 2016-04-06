@@ -19,7 +19,7 @@ public final class IoUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static int read(SocketChannel socket, IOBuffer buf)
+	public static int read(SocketChannel socket, IoBuffer buf)
 			throws IOException {
 		int len = socket.read(buf.getBuffer());
 		if (len < 0) {
@@ -36,7 +36,7 @@ public final class IoUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static int write(SocketChannel socket, IOBuffer buf)
+	public static int write(SocketChannel socket, IoBuffer buf)
 			throws IOException {
 		int len = socket.write(buf.getBuffer());
 		if (len < 0) {
@@ -45,7 +45,7 @@ public final class IoUtils {
 		return len;
 	}
 
-	public static int write(Session session, SocketChannel socket, IOBuffer buf)
+	public static int write(Session session, SocketChannel socket, IoBuffer buf)
 			throws IOException {
 		logger.debug("Session[" + session.getId() + "] is writing \n"
 				+ buf.toString());
