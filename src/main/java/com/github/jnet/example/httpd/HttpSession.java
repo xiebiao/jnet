@@ -1,10 +1,11 @@
 package com.github.jnet.example.httpd;
 
+import com.github.jnet.utils.IOBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jnet.Session;
-import com.github.jnet.utils.IoBuffer;
+import com.github.jnet.utils.IOBuffer;
 
 public class HttpSession extends Session {
 
@@ -102,7 +103,7 @@ public class HttpSession extends Session {
 
 
     @Override
-    public void read(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+    public void read(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
         logger.info("Poccess the Session[" + this.getId() + "] ");
         logger.debug(readBuf.toString());
         if (currentState == STATE_READ_HEAD) {
@@ -132,7 +133,7 @@ public class HttpSession extends Session {
         remain(BUF_SIZE, IoState.READ);
     }
 
-    private void handle(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+    private void handle(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
         Servlet action = ServletFactory.get(request);
         if (action == null) {
             throw new Exception("action not found");
@@ -147,7 +148,7 @@ public class HttpSession extends Session {
         logger.info("Write buffer to Session[" + this.getId() + "].");
     }
     @Override
-    public void open(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+    public void open(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
         remain(BUF_SIZE, IoState.READ);
     }
 
@@ -156,7 +157,7 @@ public class HttpSession extends Session {
     }
 
     @Override
-    public void write(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+    public void write(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
         logger.info(this.toString() + " writing...");
 
     }

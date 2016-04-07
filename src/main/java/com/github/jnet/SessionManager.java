@@ -1,14 +1,15 @@
 package com.github.jnet;
 
-import com.github.jnet.utils.IoBuffer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.jnet.utils.IOBuffer;
 
 /**
  * 会话管理
@@ -100,8 +101,8 @@ public final class SessionManager {
                     session.setId(i);
                     session.setCurrentEvent(Session.Event.READ);
                     session.setIdle(false);
-                    session.setReadBuffer(new IoBuffer());
-                    session.setWriteBuffer(new IoBuffer());
+                    session.setReadBuffer(new IOBuffer());
+                    session.setWriteBuffer(new IOBuffer());
                     sessionList.add(session);
                 }
             } catch (Exception e) {

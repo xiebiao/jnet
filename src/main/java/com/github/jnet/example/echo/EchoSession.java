@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jnet.Session;
-import com.github.jnet.utils.IoBuffer;
+import com.github.jnet.utils.IOBuffer;
 
 public class EchoSession extends Session {
 
@@ -18,7 +18,7 @@ public class EchoSession extends Session {
 //    }
 
     @Override
-    public void read(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+    public void read(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
         if (readBuf.position() > 1) {
             byte b = readBuf.getByte(readBuf.position() - 1);
             if (b == (byte) '\n') {
@@ -43,7 +43,7 @@ public class EchoSession extends Session {
 //    }
 
     @Override
-    public void open(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+    public void open(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
         logger.debug("Open session");
         remain(BUF_SIZE, IoState.READ);
     }
@@ -58,7 +58,7 @@ public class EchoSession extends Session {
     }
 
     @Override
-    public void write(IoBuffer readBuf, IoBuffer writeBuf) throws Exception {
+    public void write(IOBuffer readBuf, IOBuffer writeBuf) throws Exception {
 
     }
 
