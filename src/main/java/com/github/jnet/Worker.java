@@ -64,7 +64,7 @@ public class Worker implements Runnable {
     long timeout = 0;
     Iterator<Session> timeoutSessions = timeoutSessionSet.iterator();
     // 优先处理等待时间最长的
-    while (timeoutSessions.hasNext()){
+    while (timeoutSessions.hasNext()) {
       Session session = timeoutSessions.next();
       timeout = session.getNextTimeout() - System.currentTimeMillis();
       timeout = Math.max(timeout, 1);
@@ -193,6 +193,7 @@ public class Worker implements Runnable {
             writeEvent(session);
           }
         } catch (Exception e) {
+          logger.error("", e);
           eventSessions.remove();
           close(session);
         }

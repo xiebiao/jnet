@@ -61,7 +61,7 @@ public abstract class Session {
         writeBuffer.limit(0);
         break;
       case CLOSE:
-        logger.debug("Session[" + this.getId() + "]  ready for  CLOSE");
+        logger.debug("Session[" + this.getId() + "]  ready for CLOSE");
     }
   }
 

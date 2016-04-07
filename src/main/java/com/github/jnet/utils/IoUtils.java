@@ -22,9 +22,9 @@ public final class IoUtils {
 	public static int read(SocketChannel socket, IoBuffer buf)
 			throws IOException {
 		int len = socket.read(buf.getBuffer());
-		if (len < 0) {
-			throw new IOException("IO Error");
-		}
+//		if (len < 0) {
+//			throw new IOException("IO Error");
+//		}
 		return len;
 	}
 
