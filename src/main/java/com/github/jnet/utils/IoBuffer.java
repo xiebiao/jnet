@@ -7,7 +7,7 @@ import java.nio.InvalidMarkException;
 import java.nio.ReadOnlyBufferException;
 
 /**
- * IOBuffer.
+ * ByteBuffer Wrapper.
  * 
  * @see http://tutorials.jenkov.com/java-nio/buffers.html
  * @author xiebiao

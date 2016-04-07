@@ -18,6 +18,8 @@ public class EchoServer extends AbstractServer {
         try {
             server.init(sm);
             server.start();
+            Thread.sleep(5000);
+            server.stop();
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

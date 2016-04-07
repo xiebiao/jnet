@@ -54,9 +54,9 @@ public final class SessionManager {
             Iterator<Session> sessionIter = sessionList.iterator();
             while (sessionIter.hasNext()) {
                 Session session = sessionIter.next();
-                if (!session.isIdle()) {
-                    session.setIdle(true);
-                    logger.info("Get Session[" + session.getId() + "] from pool.");
+                if (session.isIdle()) {
+                    session.setIdle(false);
+                    logger.info("fetch handle Session[" + session.getId() + "]");
                     return session;
                 }
             }
@@ -65,7 +65,7 @@ public final class SessionManager {
     }
 
     public void close(Session session) {
-        session.setIdle(false);
+        session.setIdle(true);
         logger.info("Session[" + session.getId() + "] " + "is idle.");
     }
 
@@ -100,7 +100,7 @@ public final class SessionManager {
                     Session session = (Session) obj;
                     session.setId(i);
                     session.setCurrentEvent(Session.Event.READ);
-                    session.setIdle(false);
+                    session.setIdle(true);
                     session.setReadBuffer(new IoBuffer());
                     session.setWriteBuffer(new IoBuffer());
                     sessionList.add(session);

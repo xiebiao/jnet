@@ -35,13 +35,13 @@ public abstract class Session {
 
   protected SocketChannel socket = null;
 
-  private boolean idle = false;
+  // 是否空闲
+  private boolean idle = true;
 
   public Session() {
     id = 0;
   }
 
-  /*------------------------------------------------------------------ change state */
   public void timeout() throws Exception {
     logger.debug("The Session " + this.getId() + " is timeout, will be closed.");
     setNextState(IoState.CLOSE);
@@ -51,18 +51,17 @@ public abstract class Session {
     this.currentState = state;
     switch (state) {
       case WRITE:
-        logger.info("Set the Session[" + this.getId() + "] : currentState = " + "STATE_WRITE.");
+        logger.debug("Session[" + this.getId() + "]  ready for WRITE");
         readBuffer.position(0);
         readBuffer.limit(0);
         break;
       case READ:
-        logger.info("Set the Session[" + this.getId() + "] : currentState = " + "STATE_READ.");
+        logger.debug("Session[" + this.getId() + "]  ready for READ");
         writeBuffer.position(0);
         writeBuffer.limit(0);
         break;
       case CLOSE:
-        logger.info("Set Session[" + this.getId() + "] : currentState = " + "STATE_CLOSE.");
-        this.close();
+        logger.debug("Session[" + this.getId() + "]  ready for  CLOSE");
     }
   }
 
