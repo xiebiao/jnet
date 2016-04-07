@@ -5,7 +5,7 @@ import java.nio.channels.SocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnet.utils.IOBuffer;
+import com.github.jnet.utils.IoBuffer;
 
 public abstract class Session {
 
@@ -29,9 +29,9 @@ public abstract class Session {
   // 当前会话事件
   protected Event currentEvent = Event.READ;
   // 读数据
-  protected IOBuffer readBuffer = null;
+  protected IoBuffer readBuffer = null;
   // 写数据
-  protected IOBuffer writeBuffer = null;
+  protected IoBuffer writeBuffer = null;
 
   protected SocketChannel socket = null;
 
@@ -81,11 +81,11 @@ public abstract class Session {
   }
 
   /*------------------------------------------------------------------ abstract methods */
-  public abstract void open(IOBuffer readBuf, IOBuffer writeBuf) throws Exception;
+  public abstract void open(IoBuffer readBuf, IoBuffer writeBuf) throws Exception;
 
-  public abstract void read(IOBuffer readBuf, IOBuffer writeBuf) throws Exception;
+  public abstract void read(IoBuffer readBuf, IoBuffer writeBuf) throws Exception;
 
-  public abstract void write(IOBuffer readBuf, IOBuffer writeBuf) throws Exception;
+  public abstract void write(IoBuffer readBuf, IoBuffer writeBuf) throws Exception;
 
   public abstract void close();
 
@@ -106,7 +106,7 @@ public abstract class Session {
     this.currentEvent = event;
   }
 
-  public void setReadBuffer(IOBuffer readBuf) {
+  public void setReadBuffer(IoBuffer readBuf) {
     this.readBuffer = readBuf;
   }
 
@@ -126,7 +126,7 @@ public abstract class Session {
     this.idle = idle;
   }
 
-  public void setWriteBuffer(IOBuffer writeBuffer) {
+  public void setWriteBuffer(IoBuffer writeBuffer) {
     this.writeBuffer = writeBuffer;
   }
 

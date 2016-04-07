@@ -13,12 +13,11 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.github.jnet.utils.IOUtils;
+import com.github.jnet.utils.IoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jnet.utils.IOBuffer;
-import com.github.jnet.utils.IOUtils;
+import com.github.jnet.utils.IoBuffer;
 
 public class Worker implements Runnable {
 
@@ -213,17 +212,17 @@ public class Worker implements Runnable {
         }
     }
 
-    private void ioEvent(Session session, IOBuffer buffer) throws Exception {
+    private void ioEvent(Session session, IoBuffer buffer) throws Exception {
         while (buffer.remaining() > 0) {
             int dataLength = 0;
             Session.IoState curState = session.getCurrentState();
             // 根据Session状态
             switch (curState) {
                 case READ:
-                    dataLength = IOUtils.read(session.getSocketChannel(), buffer);
+                    dataLength = IoUtils.read(session.getSocketChannel(), buffer);
                     break;
                 case WRITE:
-                    dataLength = IOUtils.write(session.getSocketChannel(), buffer);
+                    dataLength = IoUtils.write(session.getSocketChannel(), buffer);
                     break;
                 case CLOSE:
                     break;
